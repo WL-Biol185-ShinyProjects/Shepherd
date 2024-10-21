@@ -9,6 +9,11 @@ output: html_document
 #imported API_SI.POV.GINI_DS2_en_csv_v2_31732 from web
 #cleaned up data manually, renamed "Gini_Inequality_Index"
 
+#imported WITS-Country-Timeseries.csv
+#cleaned up data manually, renamed "GDP"
+
+#moving forward, both must be tidied
+
 
 
 ```{r setup, include=FALSE}
