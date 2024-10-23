@@ -1,0 +1,8 @@
+---
+title: "Happiness_Index.rmd"
+author: "Brian"
+date: "10/21/2024"
+output: html_document
+---
+
+
