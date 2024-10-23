@@ -6,3 +6,13 @@ output: html_document
 ---
 
 
+```{r}
+path = "~/Shepherd/HappinessIndex.csv"
+raw_happiness_index <- read.csv(path)
+
+colnames(raw_happiness_index) <- c("country", "year", "life ladder", "gdp per capita", "social support", "healthy life expectancy at birth", "freedom to make life choices", "generosity", "perceptions of corruptions", "positive affect", "negative affect")
+
+clean_happiness_index <- raw_happiness_index
+write.csv(clean_happiness_index, file = "CLEAN_happiness_index")
+```
+
