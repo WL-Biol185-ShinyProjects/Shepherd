@@ -10,7 +10,7 @@ output: html_document
 #cleaned up data manually, renamed "Gini_Inequality_Index"
 
 #imported WITS-Country-Timeseries.csv
-#cleaned up data manually, renamed "GDP"
+#cleaned up data manually, renamed "GDP_clean.csv
 
 #moving forward, both must be tidied
 
