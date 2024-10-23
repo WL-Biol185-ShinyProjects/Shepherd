@@ -14,6 +14,40 @@ output: html_document
 
 #moving forward, both must be tidied
 
+#10/23/2024
+#tidied Gini_Inequality_Index_clean (gathered, renamed), created "Gini_Inequality_Index_tidy.csv"
+#tidied GDP_clean (gathered, renamed), created "GDP_tidy.csv"
+
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+#Tidying Gini Inequality Index - gathered columns; renamed all headers to lowercase
+Gini_Inequality_Index_tidy <- gather(Gini_Inequality_Index_clean[1:50], 
+                       key = "year", 
+                       value = "gini inequality index", 
+                       "1960":"2005"
+                       ) 
+
+colnames(Gini_Inequality_Index_tidy) <- tolower(colnames(Gini_Inequality_Index_tidy))
+
+write.csv(Gini_Inequality_Index_tidy, file = "Gini_Inequality_Index_tidy.csv")
+```
+
+```{r}
+#Tidying GDP - gathered columns; renamed all headers to lowercase
+GDP_tidy <- gather(GDP_clean[1:37], 
+                       key = "year", 
+                       value = "GDP", 
+                       "1988":"2022"
+                       ) 
+
+colnames(GDP_tidy) <- tolower(colnames(GDP_tidy))
+
+write.csv(GDP_tidy, file = "GDP_tidy.csv")
+```
 
 
 ```{r setup, include=FALSE}
