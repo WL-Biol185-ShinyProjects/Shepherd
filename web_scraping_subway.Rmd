@@ -1,0 +1,44 @@
+---
+title: "web_scraping_subway"
+author: "Brian"
+date: "10/26/2024"
+output: html_document
+---
+
+# Loading in rvest package needed for web-scraping
+
+```{r}
+library(dplyr)
+library(rvest)
+```
+
+# Reading in the html of the subway website
+
+```{r}
+subway <- read_html("https://restaurants.subway.com/")
+```
+
+
+
+```{r}
+urls <- subway %>%
+  html_elements("a")                                                # See html source code for data within this tag
+
+lapply(urls, function (x) {
+  
+  countryLink <- html_attr(x, "href")                               # Pulling the links that all pertain to a country through calling the attribute "href"
+  district_html <- read_html("https://restaurants.subway.com/austria")  # Right now Austria is hard-coded but eventually have to figure out a way to automate the reading of all countries (regexp?)
+                                                                        # Most countries are divided into districts which introduces 3 levels but some aren't, so they would have 2 levels
+  districtLink <- html_attr(x, "href")
+  cityLink <- read_html("https://restaurants.subway.com/austria/bu")
+  city_html <- html_elements("c-address")
+  })
+
+#sapply is the end goal for extracting string values
+#lapply is for lists
+```
+
+```{r}
+test_html <- html_nodes()
+```
+
