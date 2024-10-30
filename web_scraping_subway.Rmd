@@ -21,24 +21,36 @@ subway <- read_html("https://restaurants.subway.com/")
 
 
 ```{r}
-urls <- subway %>%
-  html_elements("a")                                                # See html source code for data within this tag
-
-lapply(urls, function (x) {
+addressParser <- function(url) {                                   #Creating a function for parsing addresses on the Subway website
+  links <- read_html(url) %>%                                      # Read in the html url and referring it to links in the function
+            html_nodes("a .Directory-listLink") %>%                # Specifying the css selector to refer to the country link
+            html_attr("href")                                      # Specifying the attribute to further specify the country link *** Not sure if this is necessary
+  if (length(link) == 0) {                                         # If the link does not have the same css selector (exit for loop?)
+    
+  } else {
+    return(c(lapply(links, addressParser), recurisve = TRUE))      # Otherwise, repeat the loop until it doesn't (should return be under the if statement???)
   
-  countryLink <- html_attr(x, "href")                               # Pulling the links that all pertain to a country through calling the attribute "href"
-  district_html <- read_html("https://restaurants.subway.com/austria")  # Right now Austria is hard-coded but eventually have to figure out a way to automate the reading of all countries (regexp?)
-                                                                        # Most countries are divided into districts which introduces 3 levels but some aren't, so they would have 2 levels
-  districtLink <- html_attr(x, "href")
-  cityLink <- read_html("https://restaurants.subway.com/austria/bu")
-  city_html <- html_elements("c-address")
-  })
+    }
+}
 
-#sapply is the end goal for extracting string values
-#lapply is for lists
+addressParser(subway)
+
+
+# 
+# 
+#  <- subway %>%
+#   html_elements("a")                                                # See html source code for data within this tag
+# 
+# sapply(urls, function (x) {
+#   testcountryLink <- html_nodes("a .Directory-listLink") 
+#   countryLink <- html_attr(x, "href")                               # Pulling the links that all pertain to a country through calling the attribute "href"
+#   district_html <- read_html("https://restaurants.subway.com/austria")  # Right now Austria is hard-coded but eventually have to figure out a way to automate the reading of all countries (regexp?)
+#                                                                         # Most countries are divided into districts which introduces 3 levels but some aren't, so they would have 2 levels (*might need an if statement or 2 scrapers)
+#   districtLink <- html_attr(x, "href")
+#   cityLink <- read_html("https://restaurants.subway.com/austria/bu")
+#   city_html <- html_elements("c-address")
+#   })
+# 
+# #sapply is the end goal for extracting string values
+# #lapply is for lists
 ```
-
-```{r}
-test_html <- html_nodes()
-```
-
