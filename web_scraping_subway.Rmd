@@ -22,13 +22,13 @@ subway <- read_html("https://restaurants.subway.com/")
 
 ```{r}
 addressParser <- function(url) {                                   #Creating a function for parsing addresses on the Subway website
-  links <- read_html(url) %>%                                      # Read in the html url and referring it to links in the function
+  links <- url %>%                                      # Read in the html url and referring it to links in the function
             html_nodes("a .Directory-listLink") %>%                # Specifying the css selector to refer to the country link
             html_attr("href")                                      # Specifying the attribute to further specify the country link *** Not sure if this is necessary
-  if (length(link) == 0) {                                         # If the link does not have the same css selector (exit for loop?)
+  if (length(links) == 0) {                                         # If the link has no elements (changed from "link" to "links")
     
   } else {
-    return(c(lapply(links, addressParser), recurisve = TRUE))      # Otherwise, repeat the loop until it doesn't (should return be under the if statement???)
+    c(lapply(links, addressParser), recurisve = TRUE)      # Otherwise keep repeating the loop until it does, and give a list that does not have nested lists
   
     }
 }
@@ -36,8 +36,6 @@ addressParser <- function(url) {                                   #Creating a f
 addressParser(subway)
 
 
-# 
-# 
 #  <- subway %>%
 #   html_elements("a")                                                # See html source code for data within this tag
 # 
