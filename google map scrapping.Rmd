@@ -1,0 +1,37 @@
+---
+title: "Webscrape Google Maps"
+author: "Eltice"
+date: "10/28/2024"
+output: html_document
+---
+
+
+
+```{r}
+library(tidyverse)
+library(ggmap)
+library(gmapsdistance)
+library(knitr)
+```
+
+```{r}
+register_google("AIzaSyD3hdGp9lWMmkxh-piMUEUH9Ob3XHEDDtA")
+set.api.key("AIzaSyD3hdGp9lWMmkxh-piMUEUH9Ob3XHEDDtA")
+```
+#Getting a map of Asia
+```{r}
+Asia_map <- get_map("Asia", source="google", api_key = apiKey, zoom=12)
+
+ggmap(Asia_map)
+```
+```{r}
+USA_map <- get_map("United States", source="google", api_key = apiKey, zoom=12)
+```
+
+```{r}
+ggmap(USA_map)
+```
+
+
+
+

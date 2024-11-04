@@ -4,4 +4,18 @@ author: "Eltice"
 date: "10/23/2024"
 output: html_document
 ---
+#changing title names to lower case
+```{r}
+colnames(adult.obesity) <- tolower(colnames(adult.obesity))
+```
+
+
+#changing title name for BMI estimate
+```{r}
+colnames(adult.obesity) <- c("country", "code", "year", "percentBMI")
+```
+```{r}
+write.csv(adult.obesity,file = "adult_obesity_tidy.csv")
+
+```
 
