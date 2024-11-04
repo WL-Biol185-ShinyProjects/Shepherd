@@ -15,27 +15,46 @@ library(rvest)
 # Reading in the html of the subway website
 
 ```{r}
-subway <- read_html("https://restaurants.subway.com/")
+subway <- "https://restaurants.subway.com"
+
+## LINK SHOULD NOT HAVE A BACK SLASH AT THE END!!!!!!!!!
 ```
 
 
 
 ```{r}
-addressParser <- function(url) {                                   #Creating a function for parsing addresses on the Subway website
-  links <- url %>%                                      # Read in the html url and referring it to links in the function
-            html_nodes("a .Directory-listLink") %>%                # Specifying the css selector to refer to the country link
-            html_attr("href")                                      # Specifying the attribute to further specify the country link *** Not sure if this is necessary
-  if (length(links) == 0) {                                         # If the link has no elements (changed from "link" to "links")
-    
-  } else {
-    c(lapply(links, addressParser), recurisve = TRUE)      # Otherwise keep repeating the loop until it does, and give a list that does not have nested lists
+addressParser <- function(url) {                                   # Creating a function for parsing addresses on the Subway website
+  links <- read_html(url) %>%                                      # Read in the html url and referring it to links in the function
+            html_elements(".Directory-listLink") %>%     # Specifying the css selector to refer to the country link
+            html_attr("href")
+  link <- paste(url, links, sep = "/")
+  print(link)
   
+  if 
+  # print(link)
+    # link_within <- link %>%
+    # html_elements(".Directory-listLink") %>%     # Specifying the css selector to refer to the country link
+    # html_attr("href")
+    # print(link_within)
+  # Specifying the attribute to further specify the country link *** Not sure if this is necessary
+  if (length(link) == 0) { 
+        if () {
+        link %>%
+        html_element("#address") %>%
+        html_text2()
+      } else {
+        
+    }
+
+    # If the link has no elements (changed from "link" to "links")
+  } else {
+    c(lapply(link, addressParser), recursive = TRUE)      # Otherwise keep repeating the loop until it does, and give a list that does not have nested lists
     }
 }
 
 addressParser(subway)
 
-
+# # means id
 #  <- subway %>%
 #   html_elements("a")                                                # See html source code for data within this tag
 # 
