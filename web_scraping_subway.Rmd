@@ -24,34 +24,40 @@ subway <- "https://restaurants.subway.com"
 
 ```{r}
 addressParser <- function(url) {                                   # Creating a function for parsing addresses on the Subway website
-  links <- read_html(url) %>%                                      # Read in the html url and referring it to links in the function
+  links <- read_html(url) %>%
+  
+    
+                                                                    # Read in the html url and referring it to links in the function
             html_elements(".Directory-listLink") %>%     # Specifying the css selector to refer to the country link
             html_attr("href")
-  link <- paste(url, links, sep = "/")
-  print(link)
+  print(url)
   
-  if 
+  link <- paste(url, links, sep = "/")                   ## REPEATING HREFS IS BECAUSE OF RECURSIVE LINKS VARIABLE
+  print(link)
+  if (url == "https://restaurants.subway.com/index.html") {
+    dead_link <- paste(url, sep = "")
+    #print(dead_link)
+    NA <- dead_link
+    
+   
   # print(link)
     # link_within <- link %>%
     # html_elements(".Directory-listLink") %>%     # Specifying the css selector to refer to the country link
     # html_attr("href")
     # print(link_within)
   # Specifying the attribute to further specify the country link *** Not sure if this is necessary
-  if (length(link) == 0) { 
-        if () {
+    } else if (length(link) == 0) { 
+        
         link %>%
         html_element("#address") %>%
         html_text2()
-      } else {
         
-    }
-
     # If the link has no elements (changed from "link" to "links")
-  } else {
+    } else {
+    # if () {}                                            # Needed for the two ways subways has addresses formatted on their website
     c(lapply(link, addressParser), recursive = TRUE)      # Otherwise keep repeating the loop until it does, and give a list that does not have nested lists
     }
 }
-
 addressParser(subway)
 
 # # means id
