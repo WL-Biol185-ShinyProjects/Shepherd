@@ -6,14 +6,31 @@ output: html_document
 
 ---
 
+<<<<<<< HEAD
 #Packages used
 ```{r}
 library(shiny)
 library(leaflet)
+library(bslib)
+
 ```
 
 #11/11/24 - Lizzy Nguyen
-#Produced all Domino's data
+#Produced all Domino's data, Brian uploaded them
+  #Domestic Domino's Locations Finalized.csv
+  #International Domino's Locations (Finalized).csv
 
 #Created both the ui.r and server.r servers
-#Added 4 navigation panels the UI
+#Added 3 navigation panels in ui.r named "Longitudinal Chloropleths", "Correlational Matrix", and "Fast Food Mania"
+
+#In "Longitudinal Chloropleths", created a (currently unattached) widget with 
+  #a year slider (1975-2016)
+  #4-button choice panel with each global factor (Adult Obesity, Gross GDP, Gini Inequality, Happiness Index)
+  
+=======
+# loading shiny package
+
+```{r}
+```
+
+>>>>>>> e6bd5ba37398a910fd941f9dfae25f033275e168

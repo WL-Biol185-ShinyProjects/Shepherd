@@ -2,35 +2,40 @@
 
 library(shiny)
 library(leaflet)
-library(bslib)
 
-#Define UI for application that draws a histogram
-fluidPage(
-  
-  #Application title
-  titlePanel("Happy Meals: Factors Related to Obesity"),
-  
-  #Add a button!
-  p(actionButton("titleButton", "Click Here", icon = NULL, width = NULL)),
-  
-  navset_card_underline(
+#Create multiple pages
+shinyUI(
+  navbarPage("Happy Meals: Global Factors Related to Obesity",
+             
+             
+             
+             
+             #FIRST PANEL: LONGITUDINAL CHLOROPLETHS 
+             tabPanel(
+               "Longitudinal Chloropleths",
+               sidebarLayout(
+                 sidebarPanel(
+                   sliderInput( "year",
+                                "Year:",
+                                min = 1975,
+                                max = 2016,
+                                value = 1975
+                   ),
+                   # Select which
+                   radioButtons("radio", label = h3("Global Factors"),
+                                choices = list("Adult Obesity" = 1, "Gross GDP" = 2, "Gini Inequality Index" = 3, "Happiness Index" = 4)
+                   )
+                 ),
+                 mainPanel( plotOutput("distPlot") )
+               )
+             ),
+             
     
-    nav_panel("Plot", plotOutput("plot")),
-    
-    nav_panel("Summary", tableOutput("summary")),
-    
-    nav_panel("Data", DT::dataTableOutput("data")),
-    
-    nav_panel(
-      "Reference",
-      markdown(
-        glue::glue(
-          "These data were obtained from [IMDB](http://www.imdb.com/) and [Rotten Tomatoes](https://www.rottentomatoes.com/).
-  
-        The data represent {nrow(movies)} randomly sampled movies released between 1972 to 2014 in the United States.
-        "
-        )
-      )
-    )
+             
+             
+             #SECOND PANEL: CORRELATION MATRIX
+             tabPanel("Correlation Matrix"),
+             tabPanel("Fast Food Map Mania")
   )
 )
+
