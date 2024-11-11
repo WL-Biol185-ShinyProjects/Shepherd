@@ -3,9 +3,17 @@ title: "shiny_app.rmd"
 author: "Brian"
 date: "11/11/2024"
 output: html_document
+
 ---
 
+#Packages used
 ```{r}
-
+library(shiny)
+library(leaflet)
 ```
 
+#11/11/24 - Lizzy Nguyen
+#Produced all Domino's data
+
+#Created both the ui.r and server.r servers
+#Added 4 navigation panels the UI
