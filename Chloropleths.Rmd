@@ -1,0 +1,36 @@
+---
+title: "Choropleths"
+author: "Eltice"
+date: "11/11/2024"
+output: html_document
+---
+
+
+#We will need to set up the slider in ui.R for the different years before being able to get the chlorpleth 
+#many-to-many mapping because we have data from 1975 to 2016 for each country 
+```{r}
+library(leaflet)
+library(geojsonio)
+library(tidyverse)
+```
+
+```{r}
+geo <- geojson_read("countries.geo.json", what = "sp")
+```
+
+```{r}
+obesity <- read.csv("obese_overweight_adults.csv")
+
+geo@data <- left_join(geo@data, obesity, by = c("name" = "Entity"))
+
+bins <- c(0, 2, 5, 10, 15, 20, 25, 30, Inf)
+pal <- colorBin("YlOrRd", domain = geo@data$percentBMI30.y, bins = bins)
+
+leaflet(geo) %>%
+  setView(lng = 0, lat = 20, zoom = 2) %>%
+  addPolygons(fillColor = ~pal(percentBMI30.y),
+              weight    = 2,
+              opacity   = 1,
+              dashArray = "3",)
+```
+
