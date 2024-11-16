@@ -8,25 +8,38 @@ shinyUI(
   navbarPage("Happy Meals: Global Factors Related to Obesity",
              
              
-             
-             
-             #FIRST PANEL: LONGITUDINAL CHLOROPLETHS 
+             #CREATING FIRST PANEL: LONGITUDINAL CHLOROPLETHS
+            
              tabPanel(
                "Longitudinal Chloropleths",
                sidebarLayout(
                  sidebarPanel(
                    sliderInput( "year",
                                 "Year:",
-                                min = 1975,
-                                max = 2016,
-                                value = 1975
+                                min = min(adult_obesity_tidy$year),
+                                max = max(adult_obesity_tidy$year),
+                                value = c(1975)
                    ),
-                   # Select which
-                   radioButtons("radio", label = h3("Global Factors"),
-                                choices = list("Adult Obesity" = 1, "Gross GDP" = 2, "Gini Inequality Index" = 3, "Happiness Index" = 4)
-                   )
+                   # Select which global factor - option 1: dropdown?
+                   selectInput("GlobalFactor",
+                               label = "Choose a Global Factor",
+                               choices = c("Adult Obesity",
+                                           "Gross GDP",
+                                           "Gini Inequality Index",
+                                           "Happiness Index"),
+                               selected = "Adult Obesity"),
+                   
+
+                   #Select which global factor - option 2: buttons?
+              
+                   # radioButtons("radio", label = h3("Global Factors"),
+                   #              choices = list("Adult Obesity" = 1, "Gross GDP" = 2, "Gini Inequality Index" = 3, "Happiness Index" = 4)
+                   #                 
+                   #                  
+                   # )
                  ),
-                 mainPanel( plotOutput("distPlot") )
+                 mainPanel(
+                   tableOutput("GlobalFactorDataTable") )
                )
              ),
              
