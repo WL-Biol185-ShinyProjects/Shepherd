@@ -14,12 +14,17 @@ shinyUI(
                "Longitudinal Chloropleths",
                sidebarLayout(
                  sidebarPanel(
+                  
+                   
+                  #SLIDER
                    sliderInput( "year",
                                 "Year:",
                                 min = min(adult_obesity_tidy$year),
                                 max = max(adult_obesity_tidy$year),
                                 value = c(1975)
                    ),
+                   
+                   
                    # Select which global factor - option 1: dropdown?
                    selectInput("GlobalFactor",
                                label = "Choose a Global Factor",
