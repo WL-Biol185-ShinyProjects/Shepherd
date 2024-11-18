@@ -1,6 +1,5 @@
 #Server.R for Shepherd Project
 
-
 library(shiny)
 library(leaflet)
 library(geojsonio)
@@ -51,12 +50,7 @@ function(input, output) {
       }
     }
   )
-  
 }
 }
+)
 
-# choices = c("Adult Obesity",
-#             "Gross GDP",
-#             "Gini Inequality Index",
-#             "Happiness Index"),
-# else if (input$GlobalFactor == "")
