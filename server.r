@@ -33,7 +33,7 @@ function(input, output) {
 
   output$GlobalFactorDataTable <- renderTable({
       if (input$GlobalFactor == "Adult Obesity"){
-        dataset <- obese_overweight_adults[obese_overweight_adults$year == input$year,
+        dataset <- adult_obesity_tidy[adult_obesity_tidy$year == input$year,
                                       c("entity", "percentBMI", input$var)]
       }
       
