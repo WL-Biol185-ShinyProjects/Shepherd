@@ -7,7 +7,7 @@ library(leaflet)
 shinyUI(
   navbarPage(
     "Global Trends",
-    
+
     # First Panel
     tabPanel(
       "Choropleth Map",
