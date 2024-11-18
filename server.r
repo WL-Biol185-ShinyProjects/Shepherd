@@ -1,7 +1,5 @@
 #Server.R for Shepherd Project
 
-
-
 library(shiny)
 library(leaflet)
 library(geojsonio)
