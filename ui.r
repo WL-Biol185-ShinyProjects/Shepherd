@@ -3,39 +3,51 @@
 library(shiny)
 library(leaflet)
 
-#Create multiple pages
+# Create the UI
 shinyUI(
-  navbarPage("Happy Meals: Global Factors Related to Obesity",
-             
-             
-             
-             
-             #FIRST PANEL: LONGITUDINAL CHLOROPLETHS 
-             tabPanel(
-               "Longitudinal Chloropleths",
-               sidebarLayout(
-                 sidebarPanel(
-                   sliderInput( "year",
-                                "Year:",
-                                min = 1975,
-                                max = 2016,
-                                value = 1975
-                   ),
-                   # Select which
-                   radioButtons("radio", label = h3("Global Factors"),
-                                choices = list("Adult Obesity" = 1, "Gross GDP" = 2, "Gini Inequality Index" = 3, "Happiness Index" = 4)
-                   )
-                 ),
-                 mainPanel( plotOutput("distPlot") )
-               )
-             ),
-             
+  navbarPage(
+    "Global Trends",
     
-             
-             
-             #SECOND PANEL: CORRELATION MATRIX
-             tabPanel("Correlation Matrix"),
-             tabPanel("Fast Food Map Mania")
+    # First Panel
+    tabPanel(
+      "Choropleth Map",
+      sidebarLayout(
+        sidebarPanel(
+          # Year slider
+          sliderInput(
+            inputId = "year",
+            label = "Year:",
+            min = 1975,
+            max = 2016,
+            value = 1975,
+            step = 1
+          ),
+          
+          # Global factors radio buttons
+          radioButtons(
+            inputId = "radio", 
+            label = h3("Global Factors"),
+            choices = list(
+              "Adult Obesity" = "obesity", 
+              "Gross GDP" = "gdp", 
+              "Gini Inequality Index" = "gini", 
+              "Happiness Index" = "happiness"
+            ),
+            selected = "obesity" # Default selected value
+          )
+        ),
+        
+        # Main panel for the Leaflet map
+        mainPanel(
+          leafletOutput(outputId = "map", height = "600px")
+        )
+      )
+    )
   )
 )
+             #SECOND PANEL: CORRELATION MATRIX
+             tabPanel("Correlation Matrix")
+             tabPanel("Fast Food Map Mania")
+  
+
 
