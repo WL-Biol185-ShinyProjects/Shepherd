@@ -2,9 +2,7 @@
 
 library(shiny)
 library(leaflet)
-library(geojsonio)
-library(tidyverse)
-library(dplyr)
+
 
 #Loading all datasets
 obese_overweight_adults <- read_csv("obese_overweight_adults.csv")

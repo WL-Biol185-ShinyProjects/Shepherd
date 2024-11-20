@@ -1,10 +1,10 @@
 #UI.R for Shepherd
 
-
 library(shiny)
 library(tidyverse)
 library(dplyr)
 library(leaflet)
+
 
 #Loading all relevant data sets
 obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
@@ -13,18 +13,16 @@ Gini_Inequality_Index_tidy <- read_csv("Gini_Inequality_Index_tidy.csv")
 happiness_index_tidy <- read_csv("happiness_index_tidy.csv")
 
 
-# Create the UI
+#Create the UI
+
 shinyUI(
   navbarPage("Happy Meals: Global Factors Related to Obesity",
              
-             
-             #CREATING FIRST PANEL: LONGITUDINAL CHLOROPLETHS
-             
+             #FIRST PANEL: LONGITUDINAL CHLOROPLETHS 
              tabPanel(
                "Longitudinal Chloropleths",
                sidebarLayout(
                  sidebarPanel(
-                   
                    
                    #SLIDER
                    sliderInput( "year",
@@ -67,4 +65,3 @@ shinyUI(
   )
 )
 )
-
