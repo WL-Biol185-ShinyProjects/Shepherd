@@ -24,16 +24,12 @@ subway <- "https://restaurants.subway.com"
 
 ```{r}
 addressParser <- function(url) {                                   # Creating a function for parsing addresses on the Subway website
-  links <- read_html(url) %>%
-  
-    
-                                                                    # Read in the html url and referring it to links in the function
+  links <- read_html(url) %>%                                                          # Read in the html url and referring it to links in the function
             html_elements(".Directory-listLink") %>%     # Specifying the css selector to refer to the country link
             html_attr("href")
-  print(url)
-  
-  link <- paste(url, links, sep = "/")                   ## REPEATING HREFS IS BECAUSE OF RECURSIVE LINKS VARIABLE
-  print(link)
+            #print(url)
+            link <- paste(url, links, sep = "/")                   ## REPEATING HREFS IS BECAUSE OF RECURSIVE LINKS VARIABLE
+            #print(link)
   if (url == "https://restaurants.subway.com/index.html") {
     dead_link <- paste(url, sep = "")
     #print(dead_link)
@@ -58,8 +54,6 @@ addressParser <- function(url) {                                   # Creating a 
     c(lapply(link, addressParser), recursive = TRUE)      # Otherwise keep repeating the loop until it does, and give a list that does not have nested lists
     }
 }
-addressParser(subway)
-
 # # means id
 #  <- subway %>%
 #   html_elements("a")                                                # See html source code for data within this tag
@@ -77,3 +71,9 @@ addressParser(subway)
 # #sapply is the end goal for extracting string values
 # #lapply is for lists
 ```
+
+
+```{r}
+addressParser(subway)
+```
+
