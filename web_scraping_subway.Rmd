@@ -24,6 +24,7 @@ subway <- "https://restaurants.subway.com"
 
 ```{r}
 addressParser <- function(url) {                                   # Creating a function for parsing addresses on the Subway website
+<<<<<<< HEAD
     hrefs <- read_html(url)                                                          # Read in the html url and referring it to links in the function
       if (html_elements(".Directory-listLink") == html_elements(".Directory-listLink")) {
               element <- html_elements(hrefs,".Directory-listLink")     # Specifying the css selector to refer to the country link
@@ -36,6 +37,18 @@ addressParser <- function(url) {                                   # Creating a 
   formattedHrefs <- gsub("../", "", href, fixed = TRUE)
             link <- paste(subway, formattedHrefs, sep = "/")                   ## REPEATING HREFS IS BECAUSE OF RECURSIVE LINKS VARIABLE
             print(link)
+=======
+  links <- read_html(url) %>%
+  
+    
+                                                                    # Read in the html url and referring it to links in the function
+            html_elements(".Directory-listLink") %>%     # Specifying the css selector to refer to the country link
+            html_attr("href")
+  print(url)
+  
+  link <- paste(url, links, sep = "/")                   ## REPEATING HREFS IS BECAUSE OF RECURSIVE LINKS VARIABLE
+  print(link)
+>>>>>>> 09161efce400989c60819ebd763f52da38417b25
   if (url == "https://restaurants.subway.com/index.html") {
    NA
   # print(link)
@@ -54,6 +67,8 @@ addressParser <- function(url) {                                   # Creating a 
     c(lapply(link, addressParser), recursive = TRUE)      # Otherwise keep repeating the loop until it does, and give a list that does not have nested lists
     }
 }
+addressParser(subway)
+
 # # means id
 #  <- subway %>%
 #   html_elements("a")                                                # See html source code for data within this tag
@@ -71,6 +86,7 @@ addressParser <- function(url) {                                   # Creating a 
 # #sapply is the end goal for extracting string values
 # #lapply is for lists
 ```
+<<<<<<< HEAD
 
 
 ```{r}
@@ -81,3 +97,5 @@ res
 ### different formatted address when running again
 ```
 
+=======
+>>>>>>> 09161efce400989c60819ebd763f52da38417b25
