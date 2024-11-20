@@ -11,7 +11,6 @@ output: html_document
 ```{r}
 library(shiny)
 library(leaflet)
-library(bslib)
 
 ```
 
@@ -31,6 +30,23 @@ library(bslib)
 # loading shiny package
 
 ```{r}
+#opening relevant files
+
+library(readr)
+obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
+
+GDP_tidy <- read_csv("GDP_tidy.csv")
+
+Gini_Inequality_Index_tidy <- read_csv("Gini_Inequality_Index_tidy.csv")
+
+
+happiness_index_tidy <- read_csv("happiness_index_tidy.csv")
+
+countries.geo.json <- read_csv("countries.geo.json")
+
 ```
 
 >>>>>>> e6bd5ba37398a910fd941f9dfae25f033275e168
+
+
+
