@@ -27,8 +27,8 @@ shinyUI(
                    #SLIDER
                    sliderInput( "year",
                                 "Year:",
-                                min = min(obese_overweight_adults$Year),
-                                max = max(obese_overweight_adults$Year),
+                                min = min(obese_overweight_adults$year),
+                                max = max(obese_overweight_adults$year),
                                 value = c(1975)
                    ),
                    
@@ -36,8 +36,8 @@ shinyUI(
                    # Select which global factor - dropdown menu
                    selectInput("GlobalFactor",
                                label = "Choose a Global Factor",
-                               choices = list("Adult Obesity" = obese_overweight_adults[obese_overweight_adults$Year == input$year,
-                                                                                        c("Entity", "percentBMI30", input$var)],
+                               choices = list("Adult Obesity" = obese_overweight_adults[obese_overweight_adults$year == input$year,
+                                                                                        c("country", "percentBMI30", input$var)],
                                   
                                               "Gross GDP" = GDP_tidy[GDP_tidy$year == input$year,
                                                                      c("country name", "gdp", input$var)], 
