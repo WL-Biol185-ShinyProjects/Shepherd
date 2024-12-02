@@ -12,135 +12,40 @@ library(dplyr)
 library(rvest)
 ```
 
-# Reading in the html of the subway website
-
 ```{r}
-subway <- "https://restaurants.subway.com"
-
-## LINK SHOULD NOT HAVE A BACK SLASH AT THE END!!!!!!!!!
+subway <- "https://restaurants.subway.com" 
 ```
-
-
-
-```{r}
-# Read in the html url and referring it to links in the function
-      # if (html_elements(".Directory-listLink") == html_elements(".Directory-listLink")) {
-              # element <- html_elements(hrefs,".Directory-listLink")     # Specifying the css selector to refer to the country link
-              # html_attr(element, "href")
-     #          new_x <- read_html(x) %>% html_nodes(".tittleArticuloOpinion") %>% html_text
-     # if(length(new_x) == 0) 
-     #    new_x <- read_html(x) %>% html_nodes(".nameColumnista") %>% html_text
-#       } else {
-#           other_element <- html_elements(hrefs,".Teaser-innerWrapper")
-#           html_attr(other_element, "href")
-# }
-addressParser <- function(url) {                                
-  hrefs <- read_html(url) %>%                                                          
-    html_elements(".Directory-listLink") %>%     
-    html_attr("href")
-  formattedHrefs <- gsub("../", "", hrefs, fixed = TRUE)
-  link <- paste(subway, formattedHrefs, sep = "/")        
-  read_link <- read_html(link) %>% 
-    if(html_elements(".Teaser-innerWrapper") == TRUE) {
-       html_text2()
- 
-  # print(link)
-  } else if (url == "https://restaurants.subway.com/index.html") {
-    NA
-  } else if (length(hrefs) == 0) {
-      url %>%
-      read_html %>%
-      html_element("#address") %>%
-      html_text2()
-    } else {
-    c(lapply(link, addressParser), recursive = TRUE)      
-   }
-}
-```
-
-
-```{r}
-res <- addressParser(subway)
-res
-
-
-### different formatted address when running again
-```
-
-
-```{r}
-library(dplyr)
-library(rvest)
-```
-
-```{r}
-subway <- "https://restaurants.subway.com"
-```
-
 
 ```{r}
 addressParser <- function(url) {                                
-  hrefs <- read_html(url) %>%                                                          
+  hrefs <- read_html(url) %>%                                                   
     html_elements(".Directory-listLink") %>%     
-    html_attr("href")
-  formattedHrefs <- gsub("../", "", hrefs, fixed = TRUE)
-  link <- paste(subway, formattedHrefs, sep = "/")
-  print(link)
-  if (length(html_elements(".Teaser-innerWrapper")) > 0) {
+    html_attr("href") 
+  formattedHrefs <- gsub("../", "", hrefs, fixed = TRUE) 
+  link <- paste(subway, formattedHrefs, sep = "/") 
+    other_address <- read_html(url) %>% 
+      html_elements(".Teaser-innerWrapper") 
+  if (length(other_address) > 0) {
+    hrefs <- read_html(url) %>%                                                   
+      html_elements(".Teaser-title") %>%
+      html_attr("href")
+    link2 <- paste(subway, hrefs, sep = "/")
+    print(link2)
+    c(lapply(link2, addressParser), recursive = TRUE) 
+
+  } else if (url == "https://restaurants.subway.com/index.html") { 
+    NA 
+  } else if (length(hrefs) == 0) { 
     url %>%
-      read_html %>%
-      html_element(".c-address") %>%
-      html_text2()
-     
-  # print(link)
-  } else if (url == "https://restaurants.subway.com/index.html") {
-    NA
-  } else if (length(hrefs) == 0) {
-    url %>%
-      read_html %>%
-      html_element("#address") %>%
-      html_text2()
-  } else {
-    c(lapply(link, addressParser), recursive = TRUE)      
+      read_html %>% 
+      html_element("#address") %>% 
+      html_text2() 
+  } else { 
+    c(lapply(link, addressParser), recursive = TRUE)    
   }
 }
 ```
 
-
 ```{r}
 addressParser(subway)
-
 ```
-<!-- library(dplyr) -->
-<!-- library(rvest) -->
-
-<!-- subway <- "https://restaurants.subway.com" -->
-
-<!-- addressParser <- function(url) {                                 -->
-<!--   hrefs <- read_html(url) %>%                                                           -->
-<!--     html_elements(".Directory-listLink") %>%      -->
-<!--     html_attr("href") -->
-<!--   formattedHrefs <- gsub("../", "", hrefs, fixed = TRUE) -->
-<!--   link <- paste(subway, formattedHrefs, sep = "/") -->
-
-<!--   other_address <- read_html(url) %>% -->
-<!--     html_elements(".Teaser-innerWrapper") -->
-<!--   if (length(other_address) > 0) { -->
-<!--     hrefs <- read_html(url) %>%                                                           -->
-<!--       html_elements(".Teaser-title") %>%      -->
-<!--       html_attr("href") -->
-
-<!--     # print(link) -->
-<!--   } else if (url == "https://restaurants.subway.com/index.html") { -->
-<!--     NA -->
-<!--   } else if (length(hrefs) == 0) { -->
-<!--     url %>% -->
-<!--       read_html %>% -->
-<!--       html_element("#address") %>% -->
-<!--       html_text2() -->
-<!--   } else { -->
-<!--     c(lapply(link, addressParser), recursive = TRUE)       -->
-<!--   } -->
-<!-- } -->
-
-<!-- addressParser(subway) -->
