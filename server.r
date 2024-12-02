@@ -3,6 +3,10 @@
 
 library(shiny)
 library(leaflet)
+library(geojsonio)
+library(tidyverse)
+library(dplyr)
+
 
 #Loading all datasets
 obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
@@ -40,4 +44,3 @@ geo <- geojson_read("countries.geo.json", what = "sp")
 #Load  based on selected factor 
 load_factor_data <- function(GlobalFactor) {
 }
-
