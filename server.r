@@ -8,6 +8,7 @@ library(dplyr)
 
 #Load geographic data 
 
+<<<<<<< HEAD
 geo <- geojson_read("countries.geo.json", what = "sp")
 
 #Load data set based on selected factor 
@@ -54,3 +55,22 @@ function(input, output) {
 }
 )
 
+=======
+#Loading all datasets
+obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
+GDP_tidy <- read_csv("GDP_tidy.csv")
+Gini_Inequality_Index_tidy <- read_csv("Gini_Inequality_Index_tidy.csv")
+happiness_index_tidy <- read_csv("happiness_index_tidy.csv")
+
+countries.geo.json <- geojson_read("countries.geo.json")
+
+
+#Load geographic data 
+
+geo <- geojson_read("countries.geo.json", what = "sp")
+
+#Load  based on selected factor 
+load_factor_data <- function(GlobalFactor) {
+  }
+    
+>>>>>>> c65952c7b002d5200fe0714798f281fffda4adc2
