@@ -10,7 +10,12 @@ output: html_document
 #Packages used
 ```{r}
 library(shiny)
+library(tidyverse)
+library(dplyr)
 library(leaflet)
+library(readr)
+library(geojsonio)
+
 
 ```
 
@@ -32,7 +37,6 @@ library(leaflet)
 ```{r}
 #opening relevant files
 
-library(readr)
 obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
 
 GDP_tidy <- read_csv("GDP_tidy.csv")

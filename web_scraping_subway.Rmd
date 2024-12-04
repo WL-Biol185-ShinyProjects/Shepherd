@@ -12,90 +12,40 @@ library(dplyr)
 library(rvest)
 ```
 
-# Reading in the html of the subway website
-
 ```{r}
-subway <- "https://restaurants.subway.com"
-
-## LINK SHOULD NOT HAVE A BACK SLASH AT THE END!!!!!!!!!
+subway <- "https://restaurants.subway.com" 
 ```
 
+```{r}
+addressParser <- function(url) {                                
+  hrefs <- read_html(url) %>%                                                   
+    html_elements(".Directory-listLink") %>%     
+    html_attr("href") 
+  formattedHrefs <- gsub("../", "", hrefs, fixed = TRUE) 
+  link <- paste(subway, formattedHrefs, sep = "/") 
+    other_address <- read_html(url) %>% 
+      html_elements(".Teaser-innerWrapper") 
+  if (length(other_address) > 0) {
+    hrefs <- read_html(url) %>%                                                   
+      html_elements(".Teaser-title") %>%
+      html_attr("href")
+    link2 <- paste(subway, hrefs, sep = "/")
+    print(link2)
+    c(lapply(link2, addressParser), recursive = TRUE) 
 
+  } else if (url == "https://restaurants.subway.com/index.html") { 
+    NA 
+  } else if (length(hrefs) == 0) { 
+    url %>%
+      read_html %>% 
+      html_element("#address") %>% 
+      html_text2() 
+  } else { 
+    c(lapply(link, addressParser), recursive = TRUE)    
+  }
+}
+```
 
 ```{r}
-addressParser <- function(url) {                                   # Creating a function for parsing addresses on the Subway website
-<<<<<<< HEAD
-    hrefs <- read_html(url)                                                          # Read in the html url and referring it to links in the function
-      if (html_elements(".Directory-listLink") == html_elements(".Directory-listLink")) {
-              element <- html_elements(hrefs,".Directory-listLink")     # Specifying the css selector to refer to the country link
-              html_attr(element, "href")
-      } else {
-          other_element <- html_elements(hrefs,".Teaser-innerWrapper")
-          html_attr(other_element, "href")
-}
-              #print(url)
-  formattedHrefs <- gsub("../", "", href, fixed = TRUE)
-            link <- paste(subway, formattedHrefs, sep = "/")                   ## REPEATING HREFS IS BECAUSE OF RECURSIVE LINKS VARIABLE
-            print(link)
-=======
-  links <- read_html(url) %>%
-  
-    
-                                                                    # Read in the html url and referring it to links in the function
-            html_elements(".Directory-listLink") %>%     # Specifying the css selector to refer to the country link
-            html_attr("href")
-  print(url)
-  
-  link <- paste(url, links, sep = "/")                   ## REPEATING HREFS IS BECAUSE OF RECURSIVE LINKS VARIABLE
-  print(link)
->>>>>>> 09161efce400989c60819ebd763f52da38417b25
-  if (url == "https://restaurants.subway.com/index.html") {
-   NA
-  # print(link)
-    # link_within <- link %>%
-    # html_elements(".Directory-listLink") %>%     # Specifying the css selector to refer to the country link
-    # html_attr("href")
-    # print(link_within)
-  # Specifying the attribute to further specify the country link *** Not sure if this is necessary
-    } else if (length(href) == 0) { 
-        url %>%
-        read_html() %>%
-        html_element("#address") %>%
-        html_text2()
-    } else {
-    # if () {}                                            # Needed for the two ways subways has addresses formatted on their website
-    c(lapply(link, addressParser), recursive = TRUE)      # Otherwise keep repeating the loop until it does, and give a list that does not have nested lists
-    }
-}
 addressParser(subway)
-
-# # means id
-#  <- subway %>%
-#   html_elements("a")                                                # See html source code for data within this tag
-# 
-# sapply(urls, function (x) {
-#   testcountryLink <- html_nodes("a .Directory-listLink") 
-#   countryLink <- html_attr(x, "href")                               # Pulling the links that all pertain to a country through calling the attribute "href"
-#   district_html <- read_html("https://restaurants.subway.com/austria")  # Right now Austria is hard-coded but eventually have to figure out a way to automate the reading of all countries (regexp?)
-#                                                                         # Most countries are divided into districts which introduces 3 levels but some aren't, so they would have 2 levels (*might need an if statement or 2 scrapers)
-#   districtLink <- html_attr(x, "href")
-#   cityLink <- read_html("https://restaurants.subway.com/austria/bu")
-#   city_html <- html_elements("c-address")
-#   })
-# 
-# #sapply is the end goal for extracting string values
-# #lapply is for lists
 ```
-<<<<<<< HEAD
-
-
-```{r}
-res <- addressParser(subway)
-res
-
-
-### different formatted address when running again
-```
-
-=======
->>>>>>> 09161efce400989c60819ebd763f52da38417b25
