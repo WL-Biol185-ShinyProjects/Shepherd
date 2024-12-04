@@ -13,10 +13,10 @@ library(dplyr)
 library(data.table)
 
 #Loading all datasets
-obese_overweight_adults <- fread("obese_overweight_adults.csv")
-GDP_tidy <- fread("GDP_tidy.csv")
-Gini_Inequality_Index_tidy <- fread("Gini_Inequality_Index_tidy.csv")
-happiness_index_tidy <- fread("happiness_index_tidy.csv")
+obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
+GDP_tidy <- read.csv("GDP_tidy.csv")
+Gini_Inequality_Index_tidy <- read.csv("Gini_Inequality_Index_tidy.csv")
+happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
 
 countries.geo.json <- geojson_read("countries.geo.json")
 
@@ -26,6 +26,7 @@ geo <- geojson_read("countries.geo.json", what = "sp")
   
 
 shinyServer(function(input, output, session) {
+  #WIDGET ONE
   
   #Expression for filtered data 
   filtered_data <- reactive({
@@ -78,12 +79,18 @@ shinyServer(function(input, output, session) {
   
   
   # Observe changes and update map
+  #hard-coded lines: "country" is obesity and happiness, "country name" is GDP and Gini Inequality
+  #lines: 94, 98, 104
+  
   observe({
     # Get filtered data
     data <- filtered_data()
     
     # Join the data with geographic data
-    geo@data <- left_join(geo@data, data, by = c("name" = "country"))
+    geo@data <- left_join(
+      geo@data, 
+      data, 
+      by = c("name" = "country"))
     
     # Define color palette
     bins <- c(0, 5, 10, 15, 20, 25, 30, 35, 40, Inf)

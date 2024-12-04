@@ -8,16 +8,17 @@ library(geojsonio)
 library(data.table)
 
 #Loading all datasets
-obese_overweight_adults <- fread("obese_overweight_adults.csv")
-GDP_tidy <- fread("GDP_tidy.csv")
-Gini_Inequality_Index_tidy <- fread("Gini_Inequality_Index_tidy.csv")
-happiness_index_tidy <- fread("happiness_index_tidy.csv")
+obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
+GDP_tidy <- read.csv("GDP_tidy.csv")
+Gini_Inequality_Index_tidy <- read.csv("Gini_Inequality_Index_tidy.csv")
+happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
 
 
 #Create the UI
 
 shinyUI(
   navbarPage("Happy Meals: Global Factors Related to Obesity",
+             
              #FIRST PANEL: LONGITUDINAL CHLOROPLETHS 
              tabPanel(
                "Longitudinal Chloropleths",
@@ -49,25 +50,40 @@ shinyUI(
                                                   
                                                   "Happiness Index" = "happiness_index_tidy",
               
-                                                  selected = "Gross GDP"),
+                                                  selected = "Adult Obesity"),
                   
           
-                )             
-              ),
+                       )             
+                    ),
+                     
               
-              # Main panel for the Leaflet map
-                    mainPanel(
-                        leafletOutput(outputId = "map", height = "600px")
-                   )
-         ), 
-       
-             #SECOND PANEL: CORRELATION MATRIX
-             tabPanel("Correlation Matrix"), 
-             
-             #THIRD PANEL: Fast Food Map Mania
-             tabPanel("Fast Food Map Mania") 
-               
-             )
-  )
-)
+                  # Main panel for the Leaflet map
+                        mainPanel(
+                            leafletOutput(outputId = "map", height = "600px")
+                       ),
+                  
+                  
+      ),
+
+    ),
+    #SECOND PANEL: CORRELATION MATRIX
+    tabPanel(
+      "Correlation Matrix"
+      #NOTE TO SELF THIS IS A GEOMPOINT WITH A REGRESSIONA AND TWO DROP-DOWNS
+      
+    ), 
+    
+    #THIRD PANEL: Fast Food Map Mania
+    tabPanel(
+      "Fast Food Map Mania"
+    ),
+    
+    #FOURTH PANEL: could select for raw data
+    tabPanel(
+      "Raw Data"
+      #NOTE TO SELF, EASY TO PUT IN IF HE'LL ACCEPT JANKY CODE
+      
+      
+
+    ),
     
