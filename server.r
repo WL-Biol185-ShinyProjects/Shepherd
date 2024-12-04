@@ -30,6 +30,19 @@ shinyServer(function(input, output, session) {
   #WIDGET ONE
   
   #Expression for filtered data 
+  
+  color_columns <- list(
+    "obese_overweight_adults" = "percentBMI30",  
+    "GDP_tidy" = "gdp",                         
+    "Gini_Inequality_Index_tidy" = "gini_inequality_index",  
+    "happiness_index_tidy" = "positive_affect"   
+  )
+  
+  color_column <- reactive({
+    color_columns[[input$GlobalFactor]]
+  }) 
+  
+  
   filtered_data <- reactive({
     
     data <- switch(input$GlobalFactor,
@@ -42,19 +55,21 @@ shinyServer(function(input, output, session) {
     # Filter data for the selected year
     filtered <- data %>%
       filter(year == input$year) %>%
-      select(c(1,4))
+      select(c("country",4))
     return(filtered)
-
+  
+    
+    
     # output$variableSelect <- renderUI({
     #   data <- switch(input$GlobalFactor,
                      # "Adult Obesity" = obese_overweight_adults[obese_overweight_adults$year == input$year,
                      #                                           c("country", "percentBMI30", input$var)],
                      # 
                      # "Gross GDP" = GDP_tidy[GDP_tidy$year == input$year,
-                     #                        c("country name", "gdp", input$var)], 
+                     #                        c("country", "gdp", input$var)], 
                      # 
                      # "Gini Inequality Index" = Gini_Inequality_Index_tidy[Gini_Inequality_Index_tidy$year == input$year,
-                     #                                                      c("country name", "gini inequality index", input$var)], 
+                     #                                                      c("country", "gini inequality index", input$var)], 
                      # 
                      # 
                      # "Happiness Index" = happiness_index_tidy[happiness_index_tidy$year == input$year,
@@ -86,22 +101,25 @@ shinyServer(function(input, output, session) {
   observe({
     # Get filtered data
     data <- filtered_data()
-    
+
     # Join the data with geographic data
     geo@data <- left_join(
       geo@data, 
       data, 
       by = c("name" = "country"))
     
+    #getting the correct column dynamically 
+    color_col <- color_column()
+    
     # Define color palette
     bins <- c(0, 5, 10, 15, 20, 25, 30, 35, 40, Inf)
-    pal <- colorBin("YlOrRd", domain = geo@data$percentBMI30, bins = bins)
+    pal <- colorBin("YlOrRd", domain = geo@data[[color_col]], bins = bins) #hard coded: c(geo@data$percentBMI30)
     
     # Update polygons with new data
     leafletProxy("map", data = geo) %>%
       clearShapes() %>%
       addPolygons(
-        fillColor = ~pal(percentBMI30),
+        fillColor = ~pal(geo@data[[color_col]]), #hard coded: ~pal(percentBMI30)
         fillOpacity = 0.7,
         weight = 1,
         color = "white",
