@@ -2,24 +2,27 @@
 library(dplyr)
 library(rvest)
 
+# Subway website
+subway <- "https://restaurants.subway.com"
+
 # Web Parser Function
 addressParser <- function(url) {   
   hrefs <- read_html(url) %>%                                                   
     html_elements(".Directory-listLink") %>%     
     html_attr("href") 
- 
   # Absolute URLs
   formattedHrefs <- gsub("../", "", hrefs, fixed = TRUE) 
   link <- paste(subway, formattedHrefs, sep = "/")
-  
+  print(link)
   # Needed to check if url is the address page
   addressLink <- read_html(url) %>%
-    html_elements("#address")
-    html_text()
+    html_elements(".c-address") %>%
+    html_elements("#address") %>%
+    html_text2()
   # Needed for the other address format check to work
   dirlistLink <- read_html(url) %>% 
     html_elements(".Directory-listLink") 
-  
+  print(link)
   # If length(class dir-list) == 0
   if (length(dirlistLink) == 0) {
     
@@ -69,8 +72,7 @@ addressParser <- function(url) {
       }
 }
 
-# Subway website
-subway <- "https://restaurants.subway.com"
+
 
 # Calling function on Subway website
 addressParser(subway)
