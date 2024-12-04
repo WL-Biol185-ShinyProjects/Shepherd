@@ -5,8 +5,6 @@ date: "11/11/2024"
 output: html_document
 
 ---
-
-<<<<<<< HEAD
 #Packages used
 ```{r}
 library(shiny)
@@ -15,7 +13,7 @@ library(dplyr)
 library(leaflet)
 library(readr)
 library(geojsonio)
-
+library(corrplot)
 
 ```
 
@@ -31,26 +29,25 @@ library(geojsonio)
   #a year slider (1975-2016)
   #4-button choice panel with each global factor (Adult Obesity, Gross GDP, Gini Inequality, Happiness Index)
   
-=======
-# loading shiny package
+#Next steps for "Lontigudinal Chloropleths": we need to connect the functional widgets (first the buttons, then the year) to 1) a data set filter, then connect the filter's output to a chloropleth plot 
 
-```{r}
-#opening relevant files
+=======
+
+#11/13/24 - Lizzy Nguyen
+#I have the Longitudinal Chloropleths interface, Eltice has a chloropleth generator.
+#Goal: Use to use the tidyverse filter function to connect my interface to buttons that filter our data sets, creating a dataset for Eltice's chloropleth
 
 obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
+#Update: got the slider to affect a data table that is displayed. However, this is hard coded to adult_obesity_tidy
+#Goal 2: use the dropdown slider or the buttons to affect what data set gets filtered and generated into a table
 
-GDP_tidy <- read_csv("GDP_tidy.csv")
+#PROGRESS CHECK: Experimentally trying to code in the buttons using observeEvent, left off there
 
-Gini_Inequality_Index_tidy <- read_csv("Gini_Inequality_Index_tidy.csv")
+#11/16/24 - Lizzy Nguyen
+# Progress! I figured out how to use datasetInput and reactive functions to essentially make our slider & drop-down select menu work. Right now, it generates a table of 1) the chosen factor for all countries w/ available data by year. There are a couple sketchy things to think about, but with coordinates, I think we can chloropleth this?
 
 
-happiness_index_tidy <- read_csv("happiness_index_tidy.csv")
+```{r}
 
-countries.geo.json <- read_csv("countries.geo.json")
 
 ```
-
->>>>>>> e6bd5ba37398a910fd941f9dfae25f033275e168
-
-
-

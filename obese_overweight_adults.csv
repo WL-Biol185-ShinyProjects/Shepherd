@@ -1,4 +1,4 @@
-country,code,year,percentBMI30,percentBMI25
+Entity,Code,Year,percentBMI30,percentBMI25
 Afghanistan,AFG,1975,0.4,6.1
 Afghanistan,AFG,1976,0.4,6.3
 Afghanistan,AFG,1977,0.5,6.5
