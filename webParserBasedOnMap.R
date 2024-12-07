@@ -80,5 +80,10 @@ addressParser <- function(url) {
 
 # Calling function on Subway website
 addressParser(subway)
+
+
+#  if (grepl("additional-locations", link)) {
+#   invalid <- link
+#   NA }
   
   
