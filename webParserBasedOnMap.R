@@ -17,8 +17,7 @@ addressParser <- function(url) {
   # Needed to check if url is the address page
   addressLink <- read_html(url) %>%
     html_elements(".c-address") %>%
-    html_elements("#address") %>%
-    html_text2()
+    html_elements("#address") 
   # Needed for the other address format check to work
   dirlistLink <- read_html(url) %>% 
     html_elements(".Directory-listLink") 
@@ -57,7 +56,12 @@ addressParser <- function(url) {
     }
   # If length(class dir-list) == 0 is FALSE: Check if it is an address page
   } else { 
-    if (url == addressLink) {
+    
+    if (length(addressLink) == 0) {
+      
+      c(lapply(link, addressParser), recursive = TRUE)
+      
+    } else if (url == addressLink) {
       
       # TRUE: Extract address
       url %>%
