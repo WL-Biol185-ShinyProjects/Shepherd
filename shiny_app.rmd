@@ -6,14 +6,6 @@ output: html_document
 
 ---
 
-<<<<<<< HEAD
-#Packages used
-```{r}
-library(shiny)
-library(leaflet)
-library(corrplot)
-
-```
 
 #11/11/24 - Lizzy Nguyen
 #Produced all Domino's data, Brian uploaded them
@@ -44,9 +36,4 @@ library(corrplot)
 # Progress! I figured out how to use datasetInput and reactive functions to essentially make our slider & drop-down select menu work. Right now, it generates a table of 1) the chosen factor for all countries w/ available data by year. There are a couple sketchy things to think about, but with coordinates, I think we can chloropleth this?
 
 
-```{r}
 
-
-```
-
->>>>>>> e6bd5ba37398a910fd941f9dfae25f033275e168
