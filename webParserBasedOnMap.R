@@ -21,7 +21,6 @@ addressParser <- function(url) {
   # Needed for the other address format check to work
   dirlistLink <- read_html(url) %>% 
     html_elements(".Directory-listLink") 
-  print(link)
   # If length(class dir-list) == 0
   if (length(dirlistLink) == 0) {
     
@@ -34,7 +33,8 @@ addressParser <- function(url) {
       # TRUE: extract address 
       url %>%
         read_html %>% 
-        html_element(".c-address") %>% 
+        html_element(".Teaser-innerWrapper") %>% 
+        html_element(".c-address") %>%
         html_text2() 
       
       # Extract Address
