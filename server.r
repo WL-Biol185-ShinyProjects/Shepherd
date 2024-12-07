@@ -1,10 +1,7 @@
+
 #Server.R for Shepherd Project
-
-
 
 #Calls to library
-#Server.R for Shepherd Project
-
 library(shiny)
 library(leaflet)
 library(geojsonio)
@@ -23,7 +20,7 @@ countries.geo.json <- geojson_read("countries.geo.json")
 #Load geographic data 
 
 geo <- geojson_read("countries.geo.json", what = "sp")
-  
+
 
 shinyServer(function(input, output, session) {
   #WIDGET ONE
@@ -33,8 +30,8 @@ shinyServer(function(input, output, session) {
   color_columns <- list(
     "obese_overweight_adults" = "percentBMI30",  
     "GDP_tidy" = "gdp",                         
-    "Gini_Inequality_Index_tidy" = "gini_inequality_index",  
-    "happiness_index_tidy" = "positive_affect"   
+    "Gini_Inequality_Index_tidy" = "gini inequality index",  
+    "happiness_index_tidy" = "positive affect"   
   )
   
   color_column <- reactive({
@@ -54,30 +51,15 @@ shinyServer(function(input, output, session) {
     # Filter data for the selected year
     filtered <- data %>%
       filter(year == input$year) %>%
-      select(c("country",4))
+      select(c("country", color_column()))
     return(filtered)
+    
+    
   
     
-    
-    # output$variableSelect <- renderUI({
-    #   data <- switch(input$GlobalFactor,
-                     # "Adult Obesity" = obese_overweight_adults[obese_overweight_adults$year == input$year,
-                     #                                           c("country", "percentBMI30", input$var)],
-                     # 
-                     # "Gross GDP" = GDP_tidy[GDP_tidy$year == input$year,
-                     #                        c("country", "gdp", input$var)], 
-                     # 
-                     # "Gini Inequality Index" = Gini_Inequality_Index_tidy[Gini_Inequality_Index_tidy$year == input$year,
-                     #                                                      c("country", "gini inequality index", input$var)], 
-                     # 
-                     # 
-                     # "Happiness Index" = happiness_index_tidy[happiness_index_tidy$year == input$year,
-                     #                                          c("country", "positive affect", input$var)], 
-                     
-      
-    })
-    
-
+  })
+  
+  
   #Render leaflet map
   output$map <- renderLeaflet({
     leaflet(geo) %>%
@@ -100,7 +82,7 @@ shinyServer(function(input, output, session) {
   observe({
     # Get filtered data
     data <- filtered_data()
-
+    
     # Join the data with geographic data
     geo@data <- left_join(
       geo@data, 
@@ -131,8 +113,33 @@ shinyServer(function(input, output, session) {
         )
       )
   }
+  )
+  
+  
+  
+  #LEAFLET ON FAST FOOD MAP MANIA ("map2)
+  coordinates <- read.csv("Copy of International Domino's Locations (Finalized) - Sheet1.csv")
+  
+  output$map2 <- renderLeaflet({
+    leaflet(geo) %>%
+      addTiles() %>%
+        addMarkers(data = coordinates,
+                   lng = ~Longtitude, 
+                   lat = ~Latitude, 
+                   label = ~Full.Address, 
+                   clusterOptions = markerClusterOptions()) %>%
+      setView(lng = 0, lat = 20, zoom = 2) %>%
+      addPolygons(
+        fillColor = "white", # Default color
+        fillOpacity = 0.7,
+        weight = 1,
+        color = "white",
+        dashArray = "3"
+          )
+  })
+
+  
+}
 )
 
-})
-  
 

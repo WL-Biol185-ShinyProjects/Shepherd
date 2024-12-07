@@ -19,7 +19,13 @@ happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
 shinyUI(
   navbarPage("Happy Meals: Global Factors Related to Obesity",
              
-             #FIRST PANEL: LONGITUDINAL CHLOROPLETHS 
+             
+             #FIRST PANEL: DEFINITION OVERVIEW
+             tabPanel(
+               "Definition Overview"),
+              #Note to self: this is going to be a series of dropdowns defining each factor
+             
+             #SECOND PANEL: LONGITUDINAL CHLOROPLETHS 
              tabPanel(
                "Longitudinal Chloropleths",
                
@@ -75,16 +81,23 @@ shinyUI(
     
     #THIRD PANEL: Fast Food Map Mania
     tabPanel(
-      "Fast Food Map Mania"
-    ),
+      "Fast Food Map Mania",
+      
+      
+      #upload leaflet wtih markers - note, this will have to be adjustable later?
+      mainPanel(
+        leafletOutput(outputId = "map2", height = "600px"),
+      ),
+      
+    
     
     #FOURTH PANEL: could select for raw data
     tabPanel(
       "Raw Data"
-      #NOTE TO SELF, EASY TO PUT IN IF HE'LL ACCEPT JANKY CODE
-      
+
     ),
     
   )
 )
-    
+)
+
