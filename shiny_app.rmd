@@ -5,7 +5,18 @@ date: "11/11/2024"
 output: html_document
 
 ---
+=======
+#Packages used
+```{r}
+library(shiny)
+library(tidyverse)
+library(dplyr)
+library(leaflet)
+library(readr)
+library(geojsonio)
+library(corrplot)
 
+```
 
 #11/11/24 - Lizzy Nguyen
 #Produced all Domino's data, Brian uploaded them
@@ -27,6 +38,7 @@ output: html_document
 #I have the Longitudinal Chloropleths interface, Eltice has a chloropleth generator.
 #Goal: Use to use the tidyverse filter function to connect my interface to buttons that filter our data sets, creating a dataset for Eltice's chloropleth
 
+obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
 #Update: got the slider to affect a data table that is displayed. However, this is hard coded to adult_obesity_tidy
 #Goal 2: use the dropdown slider or the buttons to affect what data set gets filtered and generated into a table
 
@@ -34,6 +46,3 @@ output: html_document
 
 #11/16/24 - Lizzy Nguyen
 # Progress! I figured out how to use datasetInput and reactive functions to essentially make our slider & drop-down select menu work. Right now, it generates a table of 1) the chosen factor for all countries w/ available data by year. There are a couple sketchy things to think about, but with coordinates, I think we can chloropleth this?
-
-
-
