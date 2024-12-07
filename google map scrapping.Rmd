@@ -31,7 +31,22 @@ USA_map <- get_map("United States", source="google", api_key = apiKey, zoom=12)
 ```{r}
 ggmap(USA_map)
 ```
+```{r}
+?geocode
+```
+```{r}
+locations <- geocode(c("Alaska Pizza+Hut", "Maryland Pizza+Hut", "Texas Pizza+Hut"))
 
+```
+```{r}
+locations <- locations %>%
+  mutate(labels = c("Alaska Pizza+Hut","Maryland Pizza+Hut", "Texas Pizza+Hut"),
+         Type =c("Restaurant","Restaurant","Restaurant"))
+```
+
+```{r}
+locationsDF <- as.data.frame(locations)
+```
 
 
 
