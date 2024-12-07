@@ -1,0 +1,70 @@
+---
+title: "Filtered_AdultBMI2016"
+author: "Brian"
+date: "12/7/2024"
+output: html_document
+---
+
+# Obesity
+```{r}
+unfiltered_obesity_df <- read_csv("obese_overweight_adults.csv")
+```
+
+
+```{r}
+filtered_obesity_df <- unfiltered_obesity_df %>%
+  select(1, 3, 4) %>%
+  filter(unfiltered_obesity_df$Year == 2016)
+colnames(filtered_obesity_df)[colnames(filtered_obesity_df) == "Entity"] <- "country"
+filtered_obesity_df
+```
+
+# Happiness
+
+```{r}
+unfiltered_happy_df <- read_csv("~/Shepherd/datasets/happiness_index_tidy.csv")
+```
+
+
+```{r}
+filtered_happy_df <- unfiltered_happy_df %>%
+  select(2, 3, 11) %>%
+  filter(unfiltered_happy_df$year == 2016)
+filtered_happy_df
+```
+
+# GDP
+
+```{r}
+unfiltered_gdp_df <- read_csv("GDP_tidy.csv")
+```
+
+
+```{r}
+filtered_gdp_df <- unfiltered_gdp_df %>%
+  select(2, 4, 5) %>%
+  filter(unfiltered_gdp_df$year == 2016)
+
+colnames(filtered_gdp_df)[colnames(filtered_gdp_df) == "country name"] <- "country"
+filtered_gdp_df
+```
+
+# Table joins
+
+```{r}
+result <-  filtered_obesity_df %>%
+  left_join(filtered_happy_df, by = "country")
+variables_df <- result %>%
+  left_join(filtered_gdp_df, by = "country")
+variables_df
+```
+
+
+# Chloropleth maps
+
+```{r}
+
+
+```
+
+
