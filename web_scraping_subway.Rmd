@@ -15,7 +15,8 @@ addressParser <- function(url) {
     html_elements(".Directory-listLink") %>%     
     html_attr("href") 
   formattedHrefs <- gsub("../", "", hrefs, fixed = TRUE) 
-  link <- paste(subway, formattedHrefs, sep = "/") 
+  link <- paste(subway, formattedHrefs, sep = "/")
+  print(link)
     other_address <- read_html(url) %>% 
       html_elements(".Teaser-innerWrapper") 
   if (length(other_address) > 0) {
@@ -23,11 +24,10 @@ addressParser <- function(url) {
       html_elements(".Teaser-title") %>%
       html_attr("href")
     link2 <- paste(subway, hrefs, sep = "/")
-    print(link2)
     c(lapply(link2, addressParser), recursive = TRUE) 
 
   } else if (url == "https://restaurants.subway.com/index.html") { 
-    NA 
+    NA           
   } else if (length(hrefs) == 0) { 
     url %>%
       read_html %>% 

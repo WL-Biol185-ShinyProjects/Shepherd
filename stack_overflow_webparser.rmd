@@ -1,0 +1,48 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(rvest)
+library(purrr)
+
+# rate-limited session_jump_to() with purrr::slowly()
+
+# use rvest session, create one if not provided
+addressParser <- function(rvest_session = NULL, url = "") {
+  if (is.null(rvest_session)) {
+    rvest_session <- session(url)
+  } else {
+    rvest_session <- slowly_jump_to(rvest_session, url)
+  }
+  
+  message(sprintf("%d\t%s", rvest_session$response$status_code, rvest_session$response$url))
+  
+  # tryCatch to handle cases where repsonse was not OK (status code >= 400);
+  # some urls (e.g. for Germany) include unicode characters and 
+  # xml2::url_absolute() can't handle those unless percent-encoded with URLencode()
+  links <- 
+    tryCatch(
+      rvest_session %>%                                                   
+        html_elements(".Directory-listLink") %>%   
+        html_attr("href") %>%
+        URLencode(),
+      error = \(e) NULL
+    )
+  
+  if (length(links) == 0) { 
+    tryCatch(
+      rvest_session %>%
+        html_element("address") %>%
+        html_text2(),
+      error = \(e) NULL
+    )
+  } else {
+    c(lapply(links, \(url) addressParser(rvest_session, url)), recursive = TRUE)     
+  }
+}
+
+res <- addressParser(url = "https://restaurants.subway.com/")
+```
+

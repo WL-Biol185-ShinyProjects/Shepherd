@@ -7,7 +7,6 @@ library(leaflet)
 library(geojsonio)
 library(tidyverse)
 library(dplyr)
-library(data.table)
 
 #Loading all datasets
 obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
@@ -73,11 +72,10 @@ shinyServer(function(input, output, session) {
       filter(year == input$year) %>%
       select(c("country", color_column()))
 
-    # Standardize the selected column (color_column) by calculating z-scores
+    # Get percentiles for comparison from the selected column (color_column)
     filtered <- filtered %>%
       mutate(
-        standardized_value = (get(color_column()) - mean(get(color_column()), na.rm = TRUE)) / 
-          sd(get(color_column()), na.rm = TRUE)
+        percentile = ntile(get(color_column()), 100)
       )
     
 
@@ -120,14 +118,14 @@ shinyServer(function(input, output, session) {
     color_col <- color_column()
     
     # Define color palette
-    bins <- c(0, 5, 10, 15, 20, 25, 30, 35, 40, Inf)
-    pal <- colorBin("YlOrRd", domain = geo@data[[color_col]], bins = bins) #hard coded: c(geo@data$percentBMI30)
+    bins <- seq(0, 100, by = 10) #bins by 10 percentiles
+    pal <- colorBin("YlOrRd", domain = geo@data$percentile, bins = bins)
     
-    # Update polygons with new data
+    # Update polygons with new data based on percentile
     leafletProxy("map", data = geo) %>%
       clearShapes() %>%
       addPolygons(
-        fillColor = ~pal(geo@data[[color_col]]), #hard coded: ~pal(percentBMI30)
+        fillColor = ~pal(geo@data$percentile), #hard coded: ~pal(percentBMI30)
         fillOpacity = 0.7,
         weight = 1,
         color = "white",
@@ -138,10 +136,12 @@ shinyServer(function(input, output, session) {
           fillOpacity = 0.7,
           bringToFront = TRUE
         ), 
-        # Add popup with country name and standardized value
+        
+        # Add popup with country name, value of thing, and percentile
         popup = ~paste(
           "<strong>Country:</strong>", name, "<br>",
-          "<strong>", color_col, ":</strong>", geo@data[[color_col]]
+          "<strong>", color_col, ":</strong>", geo@data[[color_col]], "<br>",
+          "<strong>Percentile Rank:</strong>", geo@data$percentile
       )
     )
   })
