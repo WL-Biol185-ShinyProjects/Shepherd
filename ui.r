@@ -86,7 +86,7 @@ shinyUI(
                "Fast Food Map Mania",
                
                
-               #upload leaflet wtih markers - note, this will have to be adjustable later?
+               #upload leaflet with markers - note, this will have to be adjustable later?
                mainPanel(
                  leafletOutput(outputId = "map2", height = "600px"),
                ),
