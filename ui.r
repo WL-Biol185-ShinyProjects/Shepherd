@@ -57,8 +57,7 @@ shinyUI(
                                               "Gini Inequality Index" = "Gini_Inequality_Index_tidy",
                                               
                                               "Happiness Index" = "happiness_index_tidy"
-                                
-                
+                              
                                               ),
                                
                                
@@ -77,7 +76,7 @@ shinyUI(
              ),
              #SECOND PANEL: CORRELATION MATRIX
              tabPanel(
-               "Correlation Matrix"
+               "Bivariate Analysis Chloropleth"
                #NOTE TO SELF THIS IS A GEOMPOINT WITH A REGRESSIONA AND TWO DROP-DOWNS
                
              ), 

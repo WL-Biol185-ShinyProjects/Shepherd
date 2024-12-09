@@ -73,6 +73,13 @@ shinyServer(function(input, output, session) {
       filter(year == input$year) %>%
       select(c("country", color_column()))
 
+    # Standardize the selected column (color_column) by calculating z-scores
+    filtered <- filtered %>%
+      mutate(
+        standardized_value = (get(color_column()) - mean(get(color_column()), na.rm = TRUE)) / 
+          sd(get(color_column()), na.rm = TRUE)
+      )
+    
 
     return(filtered)
     
@@ -130,10 +137,14 @@ shinyServer(function(input, output, session) {
           dashArray = "",
           fillOpacity = 0.7,
           bringToFront = TRUE
-        )
+        ), 
+        # Add popup with country name and standardized value
+        popup = ~paste(
+          "<strong>Country:</strong>", name, "<br>",
+          "<strong>", color_col, ":</strong>", geo@data[[color_col]]
       )
-  }
-  )
+    )
+  })
   
   
   
@@ -158,6 +169,4 @@ shinyServer(function(input, output, session) {
       )
   })
   
-  
-}
-)
+})
