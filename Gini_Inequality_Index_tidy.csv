@@ -1,4 +1,4 @@
-"","country","country code","indicator name","indicator code","year","gini inequality index"
+"","country","country code","indicator name","indicator code","year","gini_inequality_index"
 "1","Aruba","ABW","Gini index","SI.POV.GINI","1960",NA
 "2","Africa Eastern and Southern","AFE","Gini index","SI.POV.GINI","1960",NA
 "3","Afghanistan","AFG","Gini index","SI.POV.GINI","1960",NA

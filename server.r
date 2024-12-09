@@ -30,8 +30,8 @@ shinyServer(function(input, output, session) {
   color_columns <- list(
     "obese_overweight_adults" = "percentBMI30",  
     "GDP_tidy" = "gdp",                         
-    "Gini_Inequality_Index_tidy" = "gini inequality index",  
-    "happiness_index_tidy" = "positive affect"   
+    "Gini_Inequality_Index_tidy" = "gini_inequality_index",  
+    "happiness_index_tidy" = "positive_affect"   
   )
   
   color_column <- reactive({
@@ -64,21 +64,19 @@ shinyServer(function(input, output, session) {
                    stop("Unknown factor"))
     
     
+    # Replace all NA values with 0 across the entire dataset
+    data[is.na(data)] <- 0
+    
+    
     # Filter data for the selected year
     filtered <- data %>%
       filter(year == input$year) %>%
       select(c("country", color_column()))
 
-    
-    
+
     return(filtered)
     
-    
-    observe({
-      print(paste("Filtered data columns:", colnames(filtered_data())))
-    })
-    
-    
+
   })
   
   

@@ -49,13 +49,16 @@ shinyUI(
                    #DEBUG NOTE: input isn't an object, R is trying to read it as one - I MUST RECONCILE THIS WITH THE CODE BECAUSE IDK WHICH NAMES ARE WHICH. GET RID OF SWITCH
                    selectInput("GlobalFactor",
                                label = "Choose a Global Factor",
-                               choices = list("Adult Obesity" = "obese_overweight_adults",
+                               choices = list(
+                                              "Adult Obesity" = "obese_overweight_adults",
                                               
                                               "Gross GDP" = "GDP_tidy",
                                               
                                               "Gini Inequality Index" = "Gini_Inequality_Index_tidy",
                                               
                                               "Happiness Index" = "happiness_index_tidy",
+                                              
+                                              "Select One" = "",
                                               
                                               selected = "Adult Obesity"),
                                
