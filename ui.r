@@ -5,7 +5,6 @@ library(tidyverse)
 library(dplyr)
 library(leaflet)
 library(geojsonio)
-library(data.table)
 
 #Loading all datasets
 obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
