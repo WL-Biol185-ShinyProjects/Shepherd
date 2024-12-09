@@ -30,13 +30,28 @@ shinyServer(function(input, output, session) {
   color_columns <- list(
     "obese_overweight_adults" = "percentBMI30",  
     "GDP_tidy" = "gdp",                         
-    "Gini_Inequality_Index_tidy" = "gini inequality index",  
-    "happiness_index_tidy" = "positive affect"   
+    "Gini_Inequality_Index_tidy" = "gini_inequality_index",  
+    "happiness_index_tidy" = "positive_affect"   
   )
   
   color_column <- reactive({
-    color_columns[[input$GlobalFactor]]
-  }) 
+    req(input$GlobalFactor)  # Ensure input$GlobalFactor is available
+    
+    observe({
+      print(paste("Selected Global Factor:", input$GlobalFactor))
+      print(paste("Selected column name:", color_column()))
+    })
+    
+    
+    # Check if the input value exists in the color_columns list
+    if (input$GlobalFactor %in% names(color_columns)) {
+      # Return the corresponding column name
+      return(color_columns[[input$GlobalFactor]])
+    } else {
+      # If invalid input, return NULL and handle it gracefully
+      stop("Invalid global factor selected.")
+    }
+  })
   
   
   filtered_data <- reactive({
@@ -48,15 +63,27 @@ shinyServer(function(input, output, session) {
                    "happiness_index_tidy" = happiness_index_tidy,
                    stop("Unknown factor"))
     
+    
+    # Replace all NA values with 0 across the entire dataset
+    data[is.na(data)] <- 0
+    
+    
     # Filter data for the selected year
     filtered <- data %>%
       filter(year == input$year) %>%
       select(c("country", color_column()))
+
+    # Standardize the selected column (color_column) by calculating z-scores
+    filtered <- filtered %>%
+      mutate(
+        standardized_value = (get(color_column()) - mean(get(color_column()), na.rm = TRUE)) / 
+          sd(get(color_column()), na.rm = TRUE)
+      )
+    
+
     return(filtered)
     
-    
-  
-    
+
   })
   
   
@@ -110,10 +137,14 @@ shinyServer(function(input, output, session) {
           dashArray = "",
           fillOpacity = 0.7,
           bringToFront = TRUE
-        )
+        ), 
+        # Add popup with country name and standardized value
+        popup = ~paste(
+          "<strong>Country:</strong>", name, "<br>",
+          "<strong>", color_col, ":</strong>", geo@data[[color_col]]
       )
-  }
-  )
+    )
+  })
   
   
   
@@ -123,11 +154,11 @@ shinyServer(function(input, output, session) {
   output$map2 <- renderLeaflet({
     leaflet(geo) %>%
       addTiles() %>%
-        addMarkers(data = coordinates,
-                   lng = ~Longtitude, 
-                   lat = ~Latitude, 
-                   label = ~Full.Address, 
-                   clusterOptions = markerClusterOptions()) %>%
+      addMarkers(data = coordinates,
+                 lng = ~Longtitude, 
+                 lat = ~Latitude, 
+                 label = ~Full.Address, 
+                 clusterOptions = markerClusterOptions()) %>%
       setView(lng = 0, lat = 20, zoom = 2) %>%
       addPolygons(
         fillColor = "white", # Default color
@@ -135,12 +166,7 @@ shinyServer(function(input, output, session) {
         weight = 1,
         color = "white",
         dashArray = "3"
-          )
+      )
   })
-
   
-}
-)
-
-
-
+})
