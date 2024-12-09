@@ -1,4 +1,4 @@
-Country,Name,Full Address,Latitude,Longtitude
+Country,Name,address,latitude,longitude
 Aruba,Domino's Pizza Savaneta,"Savaneta 351C, Savaneta, Aruba",12.445917,-69.938705
 Aruba,Domino's Pizza Boulevard,"L.G. Smith Boulevard 126, Oranjestad, Aruba",12.526229,-70.046564
 Aruba,Domino's Pizza Paradera,"Shiribana 15, Paradera, Aruba",12.537476,-70.010642

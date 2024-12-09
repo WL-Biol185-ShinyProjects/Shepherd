@@ -148,25 +148,41 @@ shinyServer(function(input, output, session) {
   
   
   
-  #LEAFLET ON FAST FOOD MAP MANIA ("map2)
+  #LEAFLET ON FAST FOOD MAP MANIA ("map2")
   coordinates <- read.csv("Copy of International Domino's Locations (Finalized) - Sheet1.csv")
+  coordinates_McDonalds <- read.csv("McDonalds Global.csv")
+  coordinates_Starbucks <- read.csv("Starbucks.csv")
   
-  output$map2 <- renderLeaflet({
-    leaflet(geo) %>%
-      addTiles() %>%
-      addMarkers(data = coordinates,
-                 lng = ~Longtitude, 
-                 lat = ~Latitude, 
-                 label = ~Full.Address, 
-                 clusterOptions = markerClusterOptions()) %>%
-      setView(lng = 0, lat = 20, zoom = 2) %>%
-      addPolygons(
-        fillColor = "white", # Default color
-        fillOpacity = 0.7,
-        weight = 1,
-        color = "white",
-        dashArray = "3"
-      )
+  #Select and return data set corrresponding to drop-down choice
+  filtered_coordinates <- reactive({                                                   
+    switch(input$fastFoodDataset,                                                      # Switches based on the user's dropdown selection.
+           "coordinates" = coordinates,      
+           "coordinates_Starbucks" = coordinates_Starbucks,
+           "coordinates_McDonalds" = coordinates_McDonalds)
   })
+  
+  
+  output$map2 <- renderLeaflet({                                                       # Renders an initial Leaflet map.
+    leaflet() %>%                                                                      # Initializes a new Leaflet map object.
+      addTiles() %>%                                                                   # Adds a base tile layer to the map.
+      setView(lng = 0, lat = 20, zoom = 2)                                             # Sets the initial view (center and zoom level).
+  })
+  
+  observe({                                                                            # Watches for changes to reactive inputs and updates the map.
+    data <- filtered_coordinates()                                                     # Gets the currently selected dataset.
+    data <- data %>%
+      filter(!is.na(longitude) & !is.na(latitude) &                                   #Ensures data set contains valid longitude and latitude
+               longitude != 0 & latitude != 0) 
+      
+    leafletProxy("map2") %>%                                                           # Updates the existing Leaflet map without re-rendering it.
+      clearMarkers() %>%                                                               # Removes existing markers from the map.
+      clearMarkerClusters() %>%  #Removes clusters from old selection to prevent stacking on new selection 
+      addMarkers(data = data,                                                          # Adds new markers to the map based on the selected dataset.
+                 lng = ~longitude,                                                     # Specifies the longitude for marker placement.
+                 lat = ~latitude,                                                      # Specifies the latitude for marker placement.
+                 label = ~address,                                                     # Sets a label (popup) for each marker with the full address.
+                 clusterOptions = markerClusterOptions())                            # Enables clustering for markers to manage overlapping.
+    
+    })
   
 })

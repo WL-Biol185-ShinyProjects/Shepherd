@@ -1,4 +1,4 @@
-Brand,Store Number,Store Name,Ownership Type,Full Address,City,State/Province,Country,Postcode,Phone Number,Timezone,Longtitude,Latitude
+Brand,Store Number,Store Name,Ownership Type,Address,address,State/Province,Country,Postcode,Phone Number,Timezone,longitude,latitude
 Starbucks,47370-257954,"Meritxell, 96",Licensed,"Av. Meritxell, 96",Andorra la Vella,7,AD,AD500,376818720,GMT+1:00 Europe/Andorra,1.53,42.51
 Starbucks,22331-212325,Ajman Drive Thru,Licensed,"1 Street 69, Al Jarf",Ajman,AJ,AE,,,GMT+04:00 Asia/Dubai,55.47,25.42
 Starbucks,47089-256771,Dana Mall,Licensed,Sheikh Khalifa Bin Zayed St.,Ajman,AJ,AE,,,GMT+04:00 Asia/Dubai,55.47,25.39

@@ -84,13 +84,25 @@ shinyUI(
              #THIRD PANEL: Fast Food Map Mania
              tabPanel(
                "Fast Food Map Mania",
-               
-               
-               #upload leaflet with markers - note, this will have to be adjustable later?
-               mainPanel(
-                 leafletOutput(outputId = "map2", height = "600px"),
-               ),
-               
+               sidebarLayout(
+                 sidebarPanel(
+                   h4("Explore Global Fast Food Locations"),             #Heading for context 
+                   p("Use the dropdown menu below to explore the worldwide locations of popular fast food chains, including Domino's, Starbucks, and McDonald's. 
+                     The map dynamically updates based on your selection. Click on marker clusters to zoom in, or click individual markers to view specific addresses."),
+                    selectInput("fastFoodDataset",
+                                label = "Select a Fast Food Chain",
+                               choices = list(
+                                 "Domino's" = "coordinates",
+                                 "Starbucks" = "coordinates_Starbucks",
+                                 "McDonald's" = "coordinates_McDonalds"
+                               ),
+                               selected = "coordinates") # Default selection
+                 ),
+                 mainPanel(
+                   leafletOutput(outputId = "map2", height = "600px")
+                 )
+               )
+             ),
                
                
                #FOURTH PANEL: could select for raw data
@@ -101,4 +113,4 @@ shinyUI(
                
              )
   )
-)
+
