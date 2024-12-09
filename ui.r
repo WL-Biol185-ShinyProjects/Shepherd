@@ -56,11 +56,10 @@ shinyUI(
                                               
                                               "Gini Inequality Index" = "Gini_Inequality_Index_tidy",
                                               
-                                              "Happiness Index" = "happiness_index_tidy",
-                                              
-                                              "Select One" = "",
-                                              
-                                              selected = "Adult Obesity"),
+                                              "Happiness Index" = "happiness_index_tidy"
+                                
+                
+                                              ),
                                
                                
                    )             
