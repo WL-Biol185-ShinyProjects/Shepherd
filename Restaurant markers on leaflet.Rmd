@@ -1,0 +1,47 @@
+---
+title: "Makers on leaflet"
+author: "Eltice"
+date: "11/20/2024"
+output: html_document
+---
+
+```{r}
+library(leaflet)
+library(dplyr)
+```
+```{r}
+coordinates <- read.csv("Copy of International Domino's Locations (Finalized) - Sheet1.csv")
+
+leaflet(data = coordinates) %>%
+  addTiles() %>%
+  addMarkers(lng = ~Longtitude, lat = ~Latitude, label = ~Full.Address, clusterOptions = markerClusterOptions())
+
+```
+```{r}    
+coordinates_DominosUSA <- read.csv("Domestic Domino's Locations Finalized.csv")
+
+leaflet(data = coordinates_DominosUSA) %>%
+  addTiles() %>%
+  addMarkers(lat = ~Latitude, lng = ~Longitude, label = ~Full.Address, clusterOptions = markerClusterOptions())
+
+```
+
+
+
+```{r}
+coordinates_Starbucks <- read.csv("Starbucks.csv")
+
+leaflet(data = coordinates_Starbucks) %>%
+  addTiles() %>%
+  addMarkers(lng = ~Longtitude, lat = ~Latitude, label = ~City, clusterOptions = markerClusterOptions())
+
+```
+```{r}
+coordinates_McDonalds <- read.csv("McDonalds Global.csv")
+
+leaflet(data = coordinates_McDonalds) %>%
+  addTiles() %>%
+  addMarkers(lng = ~longitude, lat = ~latitude, label = ~address , clusterOptions = markerClusterOptions())
+```
+
+

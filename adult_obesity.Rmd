@@ -12,10 +12,11 @@ colnames(adult.obesity) <- tolower(colnames(adult.obesity))
 
 #changing title name for BMI estimate
 ```{r}
-colnames(adult.obesity) <- c("country", "code", "year", "percentBMI")
+colnames(adult.obesity) <- c("country", "code", "year", "percentBMI30")
 ```
 ```{r}
 write.csv(adult.obesity,file = "adult_obesity_tidy.csv")
 
 ```
 
+#Joined table for obese and overweight adults in Excel on 10/23/2024. File saved as "obese_overweight_adults"

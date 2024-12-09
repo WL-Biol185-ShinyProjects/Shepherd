@@ -1,53 +1,17 @@
 #UI.R for Shepherd
 
-
 library(shiny)
 library(tidyverse)
 library(dplyr)
 library(leaflet)
+library(geojsonio)
 
-<<<<<<< HEAD
-# Create the UI
-shinyUI(
-  navbarPage(
-    "Global Trends",
-
-    # First Panel
-    tabPanel(
-      "Choropleth Map",
-      sidebarLayout(
-        sidebarPanel(
-          # Year slider
-          sliderInput(
-            inputId = "year",
-            label = "Year:",
-            min = 1975,
-            max = 2016,
-            value = 1975,
-            step = 1
-          ),
-          
-          # Global factors radio buttons
-          radioButtons(
-            inputId = "radio", 
-            label = h3("Global Factors"),
-            choices = list(
-              "Adult Obesity" = "obesity", 
-              "Gross GDP" = "gdp", 
-              "Gini Inequality Index" = "gini", 
-              "Happiness Index" = "happiness"
-            ),
-            selected = "obesity" # Default selected value
-          )
-        ),
-        
-=======
-
-#Loading all relevant data sets
-obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
-GDP_tidy <- read_csv("GDP_tidy.csv")
-Gini_Inequality_Index_tidy <- read_csv("Gini_Inequality_Index_tidy.csv")
-happiness_index_tidy <- read_csv("happiness_index_tidy.csv")
+#Loading all datasets
+obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
+obese_overweight_adults$year <- as.numeric(as.character(obese_overweight_adults$year))
+GDP_tidy <- read.csv("GDP_tidy.csv")
+Gini_Inequality_Index_tidy <- read.csv("Gini_Inequality_Index_tidy.csv")
+happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
 
 
 #Create the UI
@@ -55,63 +19,85 @@ happiness_index_tidy <- read_csv("happiness_index_tidy.csv")
 shinyUI(
   navbarPage("Happy Meals: Global Factors Related to Obesity",
              
-             #FIRST PANEL: LONGITUDINAL CHLOROPLETHS 
+             
+             #FIRST PANEL: DEFINITION OVERVIEW
+             tabPanel(
+               "Definition Overview"),
+             #Note to self: this is going to be a series of dropdowns defining each factor
+             
+             #SECOND PANEL: LONGITUDINAL CHLOROPLETHS 
              tabPanel(
                "Longitudinal Chloropleths",
+               
                sidebarLayout(
+                 
+                 
                  sidebarPanel(
                    
                    #SLIDER
                    sliderInput( "year",
                                 "Year:",
-                                min = min(obese_overweight_adults$year),
-                                max = max(obese_overweight_adults$year),
-                                value = c(1975)
+                                min = min(obese_overweight_adults$year, na.rm = TRUE),
+                                max = max(obese_overweight_adults$year, na.rm = TRUE),
+                                value = c(min(obese_overweight_adults$year, na.rm = TRUE)),
+                                step = 1
                    ),
                    
                    
                    # Select which global factor - dropdown menu
+                   #DEBUG NOTE: input isn't an object, R is trying to read it as one - I MUST RECONCILE THIS WITH THE CODE BECAUSE IDK WHICH NAMES ARE WHICH. GET RID OF SWITCH
                    selectInput("GlobalFactor",
                                label = "Choose a Global Factor",
-                               choices = list("Adult Obesity" = obese_overweight_adults[obese_overweight_adults$year == input$year,
-                                                                                        c("country", "percentBMI30", input$var)],
-                                  
-                                              "Gross GDP" = GDP_tidy[GDP_tidy$year == input$year,
-                                                                     c("country name", "gdp", input$var)], 
+                               choices = list(
+                                              "Adult Obesity" = "obese_overweight_adults",
                                               
-                                              "Gini Inequality Index" = Gini_Inequality_Index_tidy[Gini_Inequality_Index_tidy$year == input$year,
-                                                                                                   c("country name", "gini inequality index", input$var)], 
+                                              "Gross GDP" = "GDP_tidy",
                                               
+                                              "Gini Inequality Index" = "Gini_Inequality_Index_tidy",
                                               
-                                              "Happiness Index" = happiness_index_tidy[happiness_index_tidy$year == input$year,
-                                                                                       c("country", "positive affect", input$var)], 
-                               selected = "Gross GDP")
-                   
+                                              "Happiness Index" = "happiness_index_tidy"
+                              
+                                              ),
+                               
+                               
+                   )             
                  ),
->>>>>>> c65952c7b002d5200fe0714798f281fffda4adc2
-        # Main panel for the Leaflet map
-        mainPanel(
-          leafletOutput(outputId = "map", height = "600px")
-        )
-      )
-<<<<<<< HEAD
-    )
-  )
-)
+                 
+                 
+                 # Main panel for the Leaflet map
+                 mainPanel(
+                   leafletOutput(outputId = "map", height = "600px")
+                 ),
+                 
+                 
+               ),
+               
+             ),
              #SECOND PANEL: CORRELATION MATRIX
-             tabPanel("Correlation Matrix")
-             tabPanel("Fast Food Map Mania")
-  
-
-
-=======
-    ), 
-    
-    #SECOND PANEL: CORRELATION MATRIX
-    tabPanel("Correlation Matrix"), 
-    tabPanel("Fast Food Map Mania") 
-    
+             tabPanel(
+               "Bivariate Analysis Chloropleth"
+               #NOTE TO SELF THIS IS A GEOMPOINT WITH A REGRESSIONA AND TWO DROP-DOWNS
+               
+             ), 
+             
+             #THIRD PANEL: Fast Food Map Mania
+             tabPanel(
+               "Fast Food Map Mania",
+               
+               
+               #upload leaflet with markers - note, this will have to be adjustable later?
+               mainPanel(
+                 leafletOutput(outputId = "map2", height = "600px"),
+               ),
+               
+               
+               
+               #FOURTH PANEL: could select for raw data
+               tabPanel(
+                 "Raw Data"
+                 
+               ),
+               
+             )
   )
 )
-)
->>>>>>> c65952c7b002d5200fe0714798f281fffda4adc2

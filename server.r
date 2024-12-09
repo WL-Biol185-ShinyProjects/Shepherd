@@ -1,76 +1,172 @@
+
 #Server.R for Shepherd Project
 
+#Calls to library
 library(shiny)
 library(leaflet)
 library(geojsonio)
 library(tidyverse)
 library(dplyr)
 
-#Load geographic data 
-
-<<<<<<< HEAD
-geo <- geojson_read("countries.geo.json", what = "sp")
-
-#Load data set based on selected factor 
-load_factor_data <- function(factor) {
- file_name <- switch(factor,
-                      obesity = "obese_overweight_adults.csv",
-                      gini = "Gini_Inequality_Index_tidy.csv",
-                      happiness = "happiness_index_tidy.csv",
-                      gdp = "GDP_tidy.csv")
-  
- obesity <- read.csv("obese_overweight_adults.csv")
-}
- 
-
-shinyServer(function(input, output, session) {
-  
- #Expression for filtered data 
-
-function(input, output) {
-  #filtering out data based on which year I choose
-
-  output$GlobalFactorDataTable <- renderTable({
-      if (input$GlobalFactor == "Adult Obesity"){
-        dataset <- adult_obesity_tidy[adult_obesity_tidy$year == input$year,
-                                      c("country", "percentBMI", input$var)]
-      }
-      
-      else if (input$GlobalFactor == "Gross GDP"){
-        dataset <- GDP_tidy[GDP_tidy$year == input$year,
-                            c("country name", "gdp", input$var)]
-      }
-      else if (input$GlobalFactor == "Gini Inequality Index"){
-        dataset <- Gini_Inequality_Index_tidy[Gini_Inequality_Index_tidy$year == input$year,
-                                              c("country name", "gini inequality index", input$var)]
-      }
-      
-      else if (input$GlobalFactor == "Happiness Index"){
-        dataset <- happiness_index_tidy[happiness_index_tidy$year == input$year,
-                                        c("country", "positive affect", input$var)]
-      }
-    }
-  )
-}
-}
-)
-
-=======
 #Loading all datasets
-obese_overweight_adults <- read_csv("obese_overweight_adults.csv")
-GDP_tidy <- read_csv("GDP_tidy.csv")
-Gini_Inequality_Index_tidy <- read_csv("Gini_Inequality_Index_tidy.csv")
-happiness_index_tidy <- read_csv("happiness_index_tidy.csv")
+obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
+GDP_tidy <- read.csv("GDP_tidy.csv")
+Gini_Inequality_Index_tidy <- read.csv("Gini_Inequality_Index_tidy.csv")
+happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
 
 countries.geo.json <- geojson_read("countries.geo.json")
 
-
 #Load geographic data 
 
 geo <- geojson_read("countries.geo.json", what = "sp")
 
-#Load  based on selected factor 
-load_factor_data <- function(GlobalFactor) {
-  }
+
+shinyServer(function(input, output, session) {
+  #WIDGET ONE
+  
+  #Expression for filtered data 
+  
+  color_columns <- list(
+    "obese_overweight_adults" = "percentBMI30",  
+    "GDP_tidy" = "gdp",                         
+    "Gini_Inequality_Index_tidy" = "gini_inequality_index",  
+    "happiness_index_tidy" = "positive_affect"   
+  )
+  
+  color_column <- reactive({
+    req(input$GlobalFactor)  # Ensure input$GlobalFactor is available
     
->>>>>>> c65952c7b002d5200fe0714798f281fffda4adc2
+    observe({
+      print(paste("Selected Global Factor:", input$GlobalFactor))
+      print(paste("Selected column name:", color_column()))
+    })
+    
+    
+    # Check if the input value exists in the color_columns list
+    if (input$GlobalFactor %in% names(color_columns)) {
+      # Return the corresponding column name
+      return(color_columns[[input$GlobalFactor]])
+    } else {
+      # If invalid input, return NULL and handle it gracefully
+      stop("Invalid global factor selected.")
+    }
+  })
+  
+  
+  filtered_data <- reactive({
+    
+    data <- switch(input$GlobalFactor,
+                   "obese_overweight_adults" = obese_overweight_adults,
+                   "GDP_tidy" = GDP_tidy,
+                   "Gini_Inequality_Index_tidy" = Gini_Inequality_Index_tidy,
+                   "happiness_index_tidy" = happiness_index_tidy,
+                   stop("Unknown factor"))
+    
+    
+    # Replace all NA values with 0 across the entire dataset
+    data[is.na(data)] <- 0
+    
+    
+    # Filter data for the selected year
+    filtered <- data %>%
+      filter(year == input$year) %>%
+      select(c("country", color_column()))
+
+    # Get percentiles for comparison from the selected column (color_column)
+    filtered <- filtered %>%
+      mutate(
+        percentile = ntile(get(color_column()), 100)
+      )
+    
+
+    return(filtered)
+    
+
+  })
+  
+  
+  #Render leaflet map
+  output$map <- renderLeaflet({
+    leaflet(geo) %>%
+      addTiles() %>%
+      setView(lng = 0, lat = 20, zoom = 2) %>%
+      addPolygons(
+        fillColor = "white", # Default color
+        fillOpacity = 0.7,
+        weight = 1,
+        color = "white",
+        dashArray = "3"
+      )
+  })
+  
+  
+  # Observe changes and update map
+  #hard-coded lines: "country" is obesity and happiness, "country name" is GDP and Gini Inequality
+  #lines: 94, 98, 104
+  
+  observe({
+    # Get filtered data
+    data <- filtered_data()
+    
+    # Join the data with geographic data
+    geo@data <- left_join(
+      geo@data, 
+      data, 
+      by = c("name" = "country"))
+    
+    #getting the correct column dynamically 
+    color_col <- color_column()
+    
+    # Define color palette
+    bins <- seq(0, 100, by = 10) #bins by 10 percentiles
+    pal <- colorBin("YlOrRd", domain = geo@data$percentile, bins = bins)
+    
+    # Update polygons with new data based on percentile
+    leafletProxy("map", data = geo) %>%
+      clearShapes() %>%
+      addPolygons(
+        fillColor = ~pal(geo@data$percentile), #hard coded: ~pal(percentBMI30)
+        fillOpacity = 0.7,
+        weight = 1,
+        color = "white",
+        dashArray = "3",
+        highlight = highlightOptions(
+          weight = 2,
+          dashArray = "",
+          fillOpacity = 0.7,
+          bringToFront = TRUE
+        ), 
+        
+        # Add popup with country name, value of thing, and percentile
+        popup = ~paste(
+          "<strong>Country:</strong>", name, "<br>",
+          "<strong>", color_col, ":</strong>", geo@data[[color_col]], "<br>",
+          "<strong>Percentile Rank:</strong>", geo@data$percentile
+      )
+    )
+  })
+  
+  
+  
+  #LEAFLET ON FAST FOOD MAP MANIA ("map2)
+  coordinates <- read.csv("Copy of International Domino's Locations (Finalized) - Sheet1.csv")
+  
+  output$map2 <- renderLeaflet({
+    leaflet(geo) %>%
+      addTiles() %>%
+      addMarkers(data = coordinates,
+                 lng = ~Longtitude, 
+                 lat = ~Latitude, 
+                 label = ~Full.Address, 
+                 clusterOptions = markerClusterOptions()) %>%
+      setView(lng = 0, lat = 20, zoom = 2) %>%
+      addPolygons(
+        fillColor = "white", # Default color
+        fillOpacity = 0.7,
+        weight = 1,
+        color = "white",
+        dashArray = "3"
+      )
+  })
+  
+})
