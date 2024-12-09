@@ -1,0 +1,201 @@
+---
+title: "Filtered_AdultBMI2016"
+author: "Brian"
+date: "12/7/2024"
+output: html_document
+---
+
+```{r}
+library(leaflet)
+library(geojsonio)
+library(tidyverse)
+remotes::install_github("chris31415926535/bivariatechoropleths")
+library(bivariatechoropleths)
+library(sf)
+```
+
+# Obesity
+```{r}
+unfiltered_obesity_df <- read_csv("obese_overweight_adults.csv")
+```
+
+
+```{r}
+filtered_obesity_df <- unfiltered_obesity_df %>%
+  select(1, 2, 3, 4) %>%
+  filter(unfiltered_obesity_df$Year == 2016)
+colnames(filtered_obesity_df)[colnames(filtered_obesity_df) == "Entity"] <- "country"
+filtered_obesity_df
+```
+
+# Happiness
+
+```{r}
+unfiltered_happy_df <- read_csv("~/Shepherd/datasets/happiness_index_tidy.csv")
+```
+
+
+```{r}
+filtered_happy_df <- unfiltered_happy_df %>%
+  select(2, 3, 11) %>%
+  filter(unfiltered_happy_df$year == 2016)
+filtered_happy_df
+```
+
+# GDP
+
+```{r}
+unfiltered_gdp_df <- read_csv("GDP_tidy.csv")
+```
+
+
+```{r}
+filtered_gdp_df <- unfiltered_gdp_df %>%
+  select(2, 4, 5) %>%
+  filter(unfiltered_gdp_df$year == 2016)
+
+colnames(filtered_gdp_df)[colnames(filtered_gdp_df) == "country name"] <- "country"
+filtered_gdp_df
+```
+
+# Table joins
+
+```{r}
+result <-  filtered_obesity_df %>%
+  left_join(filtered_happy_df, by = "country")
+variables_df <- result %>%
+  left_join(filtered_gdp_df, by = "country")
+variables_df <- variables_df %>%
+  select(1, 2, 3, 4, 6, 8) 
+
+colnames(variables_df)[colnames(variables_df) == "positive affect"] <- "positive_affect" 
+
+variables_df
+
+write.csv(variables_df, "~/Shepherd/variables_df.csv", row.names = FALSE)
+
+```
+
+
+# Chloropleth maps
+
+```{r}
+variables_df %>% 
+  filter(!is.na(Code))
+
+geo <- geojson_read("countries.geo.json", what = "sp")
+```
+
+# Bivariate Choropleth comparing happiness and obesity
+
+```{r}
+
+geo@data <- left_join(geo@data, variables_df, by = c("id" = "Code"))
+sf <- left_join(geo_sf, variables_df, by = c("id" = "Code"))
+
+head(geo@data)
+class(geo@data)
+bins <- c(0, 0.2, 0.4, 0.6, 0.8, 1, Inf)
+pal <- colorBin("YlOrRd", domain = geo@data$positive_affect, bins = bins)
+
+leaflet(geo) %>%
+  setView(lng = 0, lat = 20, zoom = 2) %>%
+  addPolygons(fillColor = ~pal(positive_affect),
+              weight    = 2,
+              opacity   = 1,
+              dashArray = "3",) %>%
+
+  addBivariateChoropleth(
+    map_data = sf,                      # Pass your geo object
+    var1_name = 'positive_affect',       # Variable from your geo@data
+    var2_name = 'percentBMI30',  # Replace with actual variable name
+    ntiles = 3,
+    var1_label = "Positive Affect",
+    var2_label = "Percent BMI 30",
+    region_name = "country",                # Adjust based on your column names
+    weight = 1,
+    fillOpacity = 0.7,
+    color = "grey",
+    highlightOptions = leaflet::highlightOptions(
+      color = "orange",
+      weight = 2,
+      opacity = 1
+    )
+  ) %>%
+  addTiles(options = tileOptions(opacity = 1))
+```
+
+# Bivariate Choropleth comparing happiness and gdp
+
+# standardize both GDP and happiness somehow 
+
+```{r}
+
+bins <- c("Low", "Medium", "High")
+
+pal <- colorBin("YlOrRd", domain = geo@data$gdp, bins = bins)
+
+leaflet(geo) %>%
+  setView(lng = 0, lat = 20, zoom = 2) %>%
+  addPolygons(fillColor = ~pal(gdp),
+              weight    = 2,
+              opacity   = 1,
+              dashArray = "3",) %>%
+  
+  addBivariateChoropleth(
+    map_data = sf,                      # Pass your geo object
+    var1_name = 'gdp',       # Variable from your geo@data
+    var2_name = 'positive_affect',  # Replace with actual variable name
+    ntiles = 3,
+    var1_label = "GDP",
+    var2_label = "Happiness",
+    region_name = "country",                # Adjust based on your column names
+    weight = 1,
+    fillOpacity = 0.7,
+    color = "grey",
+    highlightOptions = leaflet::highlightOptions(
+      color = "orange",
+      weight = 2,
+      opacity = 1
+    )
+  ) %>%
+  addTiles(options = tileOptions(opacity = 1))
+```
+
+
+
+# Bivariate Choropleth comparing obesity and GDP
+
+# standardize both variables
+
+```{r}
+head(geo@data)
+bins <- c(0, 0.2, 0.4, 0.6, 0.8, 1, Inf)
+pal <- colorBin("YlOrRd", domain = geo@data$percentBMI30, bins = bins)
+
+leaflet(geo) %>%
+  setView(lng = 0, lat = 20, zoom = 2) %>%
+  addPolygons(fillColor = ~pal(positive_affect),
+              weight    = 2,
+              opacity   = 1,
+              dashArray = "3",) %>%
+
+  addBivariateChoropleth(
+    map_data = sf,                      # Pass your geo object
+    var1_name = 'positive_affect',       # Variable from your geo@data
+    var2_name = 'gdp',  # Replace with actual variable name
+    ntiles = 3,
+    var1_label = "Positive Affect",
+    var2_label = "GDP",
+    region_name = "country",                # Adjust based on your column names
+    weight = 1,
+    fillOpacity = 0.7,
+    color = "grey",
+    highlightOptions = leaflet::highlightOptions(
+      color = "orange",
+      weight = 2,
+      opacity = 1
+    )
+  ) %>%
+  addTiles(options = tileOptions(opacity = 1))
+```
