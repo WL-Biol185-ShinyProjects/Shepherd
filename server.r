@@ -35,8 +35,23 @@ shinyServer(function(input, output, session) {
   )
   
   color_column <- reactive({
-    color_columns[[input$GlobalFactor]]
-  }) 
+    req(input$GlobalFactor)  # Ensure input$GlobalFactor is available
+    
+    observe({
+      print(paste("Selected Global Factor:", input$GlobalFactor))
+      print(paste("Selected column name:", color_column()))
+    })
+    
+    
+    # Check if the input value exists in the color_columns list
+    if (input$GlobalFactor %in% names(color_columns)) {
+      # Return the corresponding column name
+      return(color_columns[[input$GlobalFactor]])
+    } else {
+      # If invalid input, return NULL and handle it gracefully
+      stop("Invalid global factor selected.")
+    }
+  })
   
   
   filtered_data <- reactive({
@@ -48,14 +63,21 @@ shinyServer(function(input, output, session) {
                    "happiness_index_tidy" = happiness_index_tidy,
                    stop("Unknown factor"))
     
+    
     # Filter data for the selected year
     filtered <- data %>%
       filter(year == input$year) %>%
       select(c("country", color_column()))
+
+    
+    
     return(filtered)
     
     
-  
+    observe({
+      print(paste("Filtered data columns:", colnames(filtered_data())))
+    })
+    
     
   })
   
@@ -123,11 +145,11 @@ shinyServer(function(input, output, session) {
   output$map2 <- renderLeaflet({
     leaflet(geo) %>%
       addTiles() %>%
-        addMarkers(data = coordinates,
-                   lng = ~Longtitude, 
-                   lat = ~Latitude, 
-                   label = ~Full.Address, 
-                   clusterOptions = markerClusterOptions()) %>%
+      addMarkers(data = coordinates,
+                 lng = ~Longtitude, 
+                 lat = ~Latitude, 
+                 label = ~Full.Address, 
+                 clusterOptions = markerClusterOptions()) %>%
       setView(lng = 0, lat = 20, zoom = 2) %>%
       addPolygons(
         fillColor = "white", # Default color
@@ -135,12 +157,9 @@ shinyServer(function(input, output, session) {
         weight = 1,
         color = "white",
         dashArray = "3"
-          )
+      )
   })
-
+  
   
 }
 )
-
-
-
