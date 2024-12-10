@@ -49,13 +49,20 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   }) 
   
   output$giniText <- renderText({
-    "The Gini index (or Gini coefficient) is a measure of income inequality within a given population. It ranges from 0 to 1, with perfect equality represented by 0 (everyone has equal wealth) and perfect inequality represented by 1 (one person has all the wealth and nobody else). A higher Gini index indicates greater inequality, meaning that wealth is concentrated in the hands of fewer people. In contrast, lower values imply a more equitable distribution of wealth. We included this variable in our app because 1) inequality affects how gross GDP can improve an individual’s quality of life and 2) we wanted to investigate how inequality correlates to factors like adult obesity and happiness.
+    "The Gini index (or Gini coefficient) is a measure of income inequality within a given population. 
+    It ranges from 0 to 1, with perfect equality represented by 0 (everyone has equal wealth) and perfect inequality represented by 1 (one person has all the wealth and nobody else). 
+    A higher Gini index indicates greater inequality, meaning that wealth is concentrated in the hands of fewer people. 
+    In contrast, lower values imply a more equitable distribution of wealth. 
+    We included this variable in our app because 1) inequality affects how gross GDP can improve an individual’s quality of life and 2) we wanted to investigate how inequality correlates to factors like adult obesity and happiness.
 "
     
   })
   
   output$happinessText <- renderText({
-    "The World Happiness Report assesses and ranks countries according to factors that influence subjective well-being and happiness. Of these factors such as “GDP per capita”, “social support”, “freedom to make life choices”, “generosity”, and more, we selected “positive affect”. Positive affect specifically refers to the frequency of positive emotions like joy and satisfaction, and a higher score indicates that the population tends to feel happy and content more often. We chose this specific measure because we felt it most directly represented general happiness and/or subjective quality of life."
+    "The World Happiness Report assesses and ranks countries according to factors that influence subjective well-being and happiness. 
+    Of these factors such as “GDP per capita”, “social support”, “freedom to make life choices”, “generosity”, and more, we selected “positive affect”. 
+    Positive affect specifically refers to the frequency of positive emotions like joy and satisfaction, and a higher score indicates that the population tends to feel happy and content more often. 
+    We chose this specific measure because we felt it most directly represented general happiness and/or subjective quality of life."
     
   })
   
