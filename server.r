@@ -16,14 +16,51 @@ happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
 
 countries.geo.json <- geojson_read("countries.geo.json")
 
+
 #Load geographic data 
 
 geo <- geojson_read("countries.geo.json", what = "sp")
 
 
 shinyServer(function(input, output, session) {
-  #WIDGET ONE
+  #DEFINITIONS
+  output$headerText <- renderText({
+    "In this page, feel free to read about each Global Factor we’ve selected. For each, we have provided a current definition and why we decided to include it. 
+"
+  })
   
+  #Define adult obesity text
+  output$obesityText <- renderText({
+    "Adult obesity is a serious health condition that affects all parts of the body’s systems. It is highly correlated to outcomes such as hypertension, heart disease, cancer, type II diabetes, sleep apnea, osteoarthritis, and more. It is also strongly connected to an individual or community’s economic constraints with some of the largest predictors of future obesity being access to healthy food, access to nutrition education, and sedentary lifestyles.
+    
+BMI (body mass index) is a commonly used measurement of body fat based on an individual’s height and weight. Individuals with a BMI of 25 or higher are classified as overweight while individuals with a BMI of 30 or higher are classified as clinically obese. 
+    
+With this in mind, we have chosen the percentage of people in a given country with a BMI of 30 or higher to represent adult obesity.
+    
+However, BMI does have some flaws and limitations. For example, although a high BMI is generally related to increased body fat, this measure’s use of body weight and height doesn’t account for overall body composition as well as differences between races and sexes. 
+"
+  })
+  
+  
+  output$gdpText <- renderText({
+    "Gross domestic product (GDP) is the total market value of all goods and services produced by a country over one year and serves as the most common indicator of economic performance. We chose it because prosperity and economic health are generally correlated to a higher standard of living because of increased access to goods and services in addition to stronger healthcare and education. However, depending on how resources are distributed in a given society, this may not necessarily be the case.
+In our app, you’ll find a country’s gross GDP in a given year as well as a country’s GDP by capita (per person). 
+"
+  }) 
+  
+  output$giniText <- renderText({
+    "The Gini index (or Gini coefficient) is a measure of income inequality within a given population. It ranges from 0 to 1, with perfect equality represented by 0 (everyone has equal wealth) and perfect inequality represented by 1 (one person has all the wealth and nobody else). A higher Gini index indicates greater inequality, meaning that wealth is concentrated in the hands of fewer people. In contrast, lower values imply a more equitable distribution of wealth. We included this variable in our app because 1) inequality affects how gross GDP can improve an individual’s quality of life and 2) we wanted to investigate how inequality correlates to factors like adult obesity and happiness.
+"
+    
+  })
+  
+  output$happinessText <- renderText({
+    "The World Happiness Report assesses and ranks countries according to factors that influence subjective well-being and happiness. Of these factors such as “GDP per capita”, “social support”, “freedom to make life choices”, “generosity”, and more, we selected “positive affect”. Positive affect specifically refers to the frequency of positive emotions like joy and satisfaction, and a higher score indicates that the population tends to feel happy and content more often. We chose this specific measure because we felt it most directly represented general happiness and/or subjective quality of life."
+    
+  })
+  
+  
+  #LONGITUDINAL CHLOROPLETHS
   #Expression for filtered data 
   
   color_columns <- list(
@@ -55,6 +92,9 @@ shinyServer(function(input, output, session) {
   
   filtered_data <- reactive({
     
+    selected_year <- as.integer(format(input$year, "%Y"))
+    print(paste("Filtering data for year:", selected_year))
+    
     data <- switch(input$GlobalFactor,
                    "obese_overweight_adults" = obese_overweight_adults,
                    "GDP_tidy" = GDP_tidy,
@@ -69,7 +109,7 @@ shinyServer(function(input, output, session) {
     
     # Filter data for the selected year
     filtered <- data %>%
-      filter(year == input$year) %>%
+      filter(year == selected_year) %>%
       select(c("country", color_column()))
 
     # Get percentiles for comparison from the selected column (color_column)

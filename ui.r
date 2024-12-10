@@ -8,7 +8,7 @@ library(geojsonio)
 
 #Loading all datasets
 obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
-obese_overweight_adults$year <- as.numeric(as.character(obese_overweight_adults$year))
+obese_overweight_adults$year <- as.integer(obese_overweight_adults$year) #calling it an integer here but a date in SliderInput
 GDP_tidy <- read.csv("GDP_tidy.csv")
 Gini_Inequality_Index_tidy <- read.csv("Gini_Inequality_Index_tidy.csv")
 happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
@@ -19,29 +19,56 @@ happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
 shinyUI(
   navbarPage("Happy Meals: Global Factors Related to Obesity",
              
-             
              #FIRST PANEL: DEFINITION OVERVIEW
              tabPanel(
-               "Definition Overview"),
-             #Note to self: this is going to be a series of dropdowns defining each factor
+               "Definition Overview",
+               
+               fluidRow(
+                 column(12,
+                        tags$h2(strong("Introduction")),
+                        verbatimTextOutput("headerText"))
+               ),
+               
+               fluidRow(
+                 column(12,
+                        tags$h3(strong("Adult Obesity")),
+                        verbatimTextOutput("obesityText"))
+               ),
+               fluidRow(
+                 column(12,
+                        tags$h3(strong("Gross Domestic Product (GDP)")),
+                        verbatimTextOutput("gdpText"))
+               ),
+               fluidRow(
+                 column(12,
+                        tags$h3(strong("Gini Inequality Index")),
+                        verbatimTextOutput("giniText"))
+               ),
+               fluidRow(
+                 column(12,
+                        tags$h3(strong("Happiness Index")),
+                        verbatimTextOutput("happinessText"))
+               )
+             ),
              
              #SECOND PANEL: LONGITUDINAL CHLOROPLETHS 
              tabPanel(
                "Longitudinal Chloropleths",
                
                sidebarLayout(
-                 
-                 
                  sidebarPanel(
-                   
                    #SLIDER
-                   sliderInput( "year",
-                                "Year:",
-                                min = min(obese_overweight_adults$year, na.rm = TRUE),
-                                max = max(obese_overweight_adults$year, na.rm = TRUE),
-                                value = c(min(obese_overweight_adults$year, na.rm = TRUE)),
-                                step = 1
+                   sliderInput( 
+                     "year",
+                     "Year:",
+                     min = as.Date(paste(min(obese_overweight_adults$year), "01", "01", sep = "-")),  
+                     max = as.Date(paste(max(obese_overweight_adults$year), "01", "01", sep = "-")),  
+                     value = as.Date(paste(min(obese_overweight_adults$year), "01", "01", sep = "-")),
+                     step = 365.25,  # days per year
+                     timeFormat = "%Y"  
                    ),
+                   
+                   #COULD COMBINE WIDGET 1 WITH THE MARKERS - MERGE GEOSPATIAL DATA FOR ADD MARKERS - might have to merge latitude and longitude if they're different
                    
                    
                    # Select which global factor - dropdown menu
@@ -59,8 +86,8 @@ shinyUI(
                               
                                               ),
                                
-                               
-                   )             
+                   )
+                   
                  ),
                  
                  
@@ -73,14 +100,15 @@ shinyUI(
                ),
                
              ),
-             #SECOND PANEL: CORRELATION MATRIX
+             
+             #CORRELATION ANALYSIS
              tabPanel(
-               "Bivariate Analysis Chloropleth"
+               "Correlation Analysis"
                #NOTE TO SELF THIS IS A GEOMPOINT WITH A REGRESSIONA AND TWO DROP-DOWNS
                
              ), 
              
-             #THIRD PANEL: Fast Food Map Mania
+             #FAST FOOD MAP MANIA
              tabPanel(
                "Fast Food Map Mania",
                sidebarLayout(
@@ -97,6 +125,8 @@ shinyUI(
                                ),
                                selected = "coordinates") # Default selection
                  ),
+                 
+                 
                  mainPanel(
                    leafletOutput(outputId = "map2", height = "600px")
                  )
