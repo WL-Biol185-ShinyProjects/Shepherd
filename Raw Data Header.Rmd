@@ -1,0 +1,94 @@
+---
+title: "Raw Data"
+author: "LNguyen"
+date: "12/10/2024"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+#Getting data tables out
+
+```{r}
+library(shiny)
+library(bslib)
+
+# Define UI ----
+ui <- fluidPage(
+  navbarPage("Happy Meals: Global Factors Related to Obesity",
+     #FIRST PANEL: DEFINITION OVERVIEW
+     tabPanel(
+       "Raw Data",
+       
+       fluidRow(
+         column(12,
+                tags$h3(strong("Raw Data Tables")),
+                verbatimTextOutput("rawdescText"))
+         #Note: what if we added a dropdown to select by column?
+         ),
+       
+       selectInput("GlobalFactor",
+                               label = "Choose a Global Factor",
+                               choices = list(
+                                              "Adult Obesity" = "obese_overweight_adults",
+                                              
+                                              "Gross GDP" = "GDP_tidy",
+                                              
+                                              "Gini Inequality Index" = "Gini_Inequality_Index_tidy",
+                                              
+                                              "Happiness Index" = "happiness_index_tidy"
+                              
+                                              ),
+                    ),
+                  tableOutput("data_table")  #outputs data table
+         )
+  )
+)
+
+      
+
+# Define server logic ----
+server <- function(input, output) {
+
+  #Define raw description header text
+  output$rawdescText <- renderText({
+    "Select a factor to view its corresponding data set!"
+  })
+  
+    # Create a reactive expression to select the appropriate data based on the input
+  selected_data <- reactive({
+    switch(input$GlobalFactor,
+           "obese_overweight_adults" = obese_overweight_adults,
+           "GDP_tidy" = GDP_tidy,
+           "Gini_Inequality_Index_tidy" = Gini_Inequality_Index_tidy,
+           "happiness_index_tidy" = happiness_index_tidy,
+           stop("Unknown factor")
+    )
+  })
+  
+  # spits out table
+  output$data_table <- renderTable({
+  })
+}
+
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
+             
+             
+```
+
+
+
+

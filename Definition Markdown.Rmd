@@ -1,0 +1,130 @@
+---
+title: "Definitions Page"
+author: "LNguyen"
+date: "12/10/2024"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(shiny)
+library(bslib)
+
+# Define UI ----
+ui <- fluidPage(
+  titlePanel("Definitions"),
+  
+  sidebarLayout(
+      sidebarPanel(
+        "This will actually be the tab panel, remove this later"
+      ),
+      
+      mainPanel(
+        tabsetPanel(
+          tabPanel("Adult Obesity", verbatimTextOutput("obesityText")),
+          tabPanel("Gross GDP", verbatimTextOutput("gdpText")),
+          tabPanel("Gini Inequality Index", verbatimTextOutput("giniText")),
+          tabPanel("Happiness Index", verbatimTextOutput("happinessText"))
+  ))))
+
+
+# Define server logic ----
+server <- function(input, output) {
+
+  #Define adult obesity text
+  output$obesityText <- renderText({
+    "INSERT WHAT I WANT TO SAY HERE - OBESITY"
+  })
+  
+  
+  output$gdpText <- renderText({
+    "INSERT WHAT I WANT TO SAY HERE - GDP"
+  }) 
+  
+  output$giniText <- renderText({
+    "INSERT WHAT I WANT TO SAY HERE - GINI INEQUALITY"
+    
+  })
+  
+  output$happinessText <- renderText({
+    "INSERT WHAT I WANT TO SAY HERE - HAPPINESS INDEX"
+    
+  })
+    
+}
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
+```
+```{r}
+
+#VERSION TWO - BETTER
+library(shiny)
+library(bslib)
+
+# Define UI ----
+ui <- fluidPage(
+  navbarPage("Happy Meals: Global Factors Related to Obesity",
+     #FIRST PANEL: DEFINITION OVERVIEW
+     tabPanel(
+       "Definition Overview",
+       
+       fluidRow(
+         column(12,
+                tags$h3(strong("Adult Obesity")),
+                verbatimTextOutput("obesityText"))
+         ),
+       fluidRow(
+         column(12,
+                tags$h3(strong("Gross Domestic Product (GDP)")),
+                verbatimTextOutput("gdpText"))
+         ),
+       fluidRow(
+         column(12,
+                tags$h3(strong("Gini Inequality Index")),
+                verbatimTextOutput("giniText"))
+         ),
+       fluidRow(
+         column(12,
+                tags$h3(strong("Happiness Index")),
+                verbatimTextOutput("happinessText"))
+         )
+       
+     )
+  )
+)
+      
+
+# Define server logic ----
+server <- function(input, output) {
+
+  #Define adult obesity text
+  output$obesityText <- renderText({
+    "INSERT WHAT I WANT TO SAY HERE - OBESITY"
+  })
+  
+  
+  output$gdpText <- renderText({
+    "INSERT WHAT I WANT TO SAY HERE - GDP"
+  }) 
+  
+  output$giniText <- renderText({
+    "INSERT WHAT I WANT TO SAY HERE - GINI INEQUALITY"
+    
+  })
+  
+  output$happinessText <- renderText({
+    "INSERT WHAT I WANT TO SAY HERE - HAPPINESS INDEX"
+    
+  })
+    
+}
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
+```
