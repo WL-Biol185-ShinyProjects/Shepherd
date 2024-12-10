@@ -139,6 +139,15 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
       )
   })
   
+  #Include text box for "year_info"
+  output$year_info <- renderText({
+    "
+    Adult Obesity: 1975 - 2016
+    Gross GDP: 1988 - 2016
+    Gini Inequality Index: 1975 - 2005
+    Happiness Index: 2005 - 2016
+    "
+  })
   
   # Observe changes and update map
   #hard-coded lines: "country" is obesity and happiness, "country name" is GDP and Gini Inequality
@@ -216,7 +225,7 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
       
     leafletProxy("map2") %>%                                                           # Updates the existing Leaflet map without re-rendering it.
       clearMarkers() %>%                                                               # Removes existing markers from the map.
-      clearMarkerClusters() %>%  #Removes clusters from old selection to prevent stacking on new selection 
+      clearMarkerClusters() %>%  
       addMarkers(data = data,                                                          # Adds new markers to the map based on the selected dataset.
                  lng = ~longitude,                                                     # Specifies the longitude for marker placement.
                  lat = ~latitude,                                                      # Specifies the latitude for marker placement.

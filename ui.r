@@ -64,7 +64,7 @@ shinyUI(
                      min = as.Date(paste(min(obese_overweight_adults$year), "01", "01", sep = "-")),  
                      max = as.Date(paste(max(obese_overweight_adults$year), "01", "01", sep = "-")),  
                      value = as.Date(paste(min(obese_overweight_adults$year), "01", "01", sep = "-")),
-                     step = 365.25,  # days per year
+                     step = 365,  # days per year
                      timeFormat = "%Y"  
                    ),
                    
@@ -85,9 +85,9 @@ shinyUI(
                                               "Happiness Index" = "happiness_index_tidy"
                               
                                               ),
-                               
-                   )
-                   
+                              ),
+                   tags$h5(strong("Available Years per Factor")),
+                   verbatimTextOutput("year_info")
                  ),
                  
                  
