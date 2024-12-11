@@ -157,8 +157,7 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   })
   
   # Observe changes and update map
-  #hard-coded lines: "country" is obesity and happiness, "country name" is GDP and Gini Inequality
-  #lines: 94, 98, 104
+
   
   observe({
     # Get filtered data
@@ -168,7 +167,7 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
     geo@data <- left_join(
       geo@data, 
       data, 
-      by = c("name" = "country"))
+      by = c("id" = "code"))
     
     #getting the correct column dynamically 
     color_col <- color_column()
