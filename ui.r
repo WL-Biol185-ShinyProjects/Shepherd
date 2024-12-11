@@ -135,11 +135,32 @@ shinyUI(
                
                
                #FOURTH PANEL: could select for raw data
-               tabPanel(
-                 "Raw Data"
-                 
+             tabPanel(
+               "Raw Data",
+               
+               fluidRow(
+                 column(12,
+                        tags$h3(strong("Raw Data Tables")),
+                        verbatimTextOutput("rawdescText"))
+                 #Note: what if we added a dropdown to select by column?
                ),
                
+               selectInput("GlobalFactor",
+                           label = "Choose a Global Factor",
+                           choices = list(
+                             "Adult Obesity" = "obese_overweight_adults",
+                             
+                             "Gross GDP" = "GDP_tidy",
+                             
+                             "Gini Inequality Index" = "Gini_Inequality_Index_tidy",
+                             
+                             "Happiness Index" = "happiness_index_tidy"
+                             
+                           ),
+               ),
+               uiOutput("checkbox"),
+               textOutput("null_message"),
+               tableOutput("data_table")  #outputs data table
              )
   )
-
+)

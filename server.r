@@ -241,4 +241,54 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
     
     })
   
-})
+  #Define raw description header text
+  output$rawdescText <- renderText({
+    "Select a factor to view its corresponding data set!"
+  })
+  
+  # Create a reactive expression to select the appropriate data based on the input
+  selected_data <- reactive({
+    switch(input$GlobalFactor,
+           "obese_overweight_adults" = obese_overweight_adults,
+           "GDP_tidy" = GDP_tidy,
+           "Gini_Inequality_Index_tidy" = Gini_Inequality_Index_tidy,
+           "happiness_index_tidy" = happiness_index_tidy,
+           stop("Unknown factor")
+    )
+  })
+  
+  #column select checkboxes
+  output$checkbox <- renderUI({
+    data <- selected_data()
+    checkboxGroupInput(inputId = "columns",
+                       label = "Select columns",
+                       choices = colnames(data),
+                       selected = colnames(data),
+                       inline = TRUE) 
+  })
+  
+  # spits out table
+  output$data_table <- renderTable({
+    data <- selected_data()
+    selected_columns <- input$columns
+    data[, selected_columns, drop = FALSE] 
+    
+    if (length(selected_columns) > 0) {
+      return(data[, selected_columns, drop = FALSE])  
+    } else {
+      return(NULL)
+    }
+  })
+  
+  #if there's nothing selected, it'll tell you. if not, the text box won't
+  output$null_message <- renderText({
+    selected_columns <- input$columns
+    
+    if (length(selected_columns) == 0) {
+      return("Please select a column to view!")} 
+    else {
+      return(NULL)
+    }
+  })
+}
+)
