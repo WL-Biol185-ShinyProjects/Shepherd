@@ -167,7 +167,7 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
     geo@data <- left_join(
       geo@data, 
       data, 
-      by = c("id" = "code"))
+      by = c("name" = "country")) #c("name" = "country")) returns functionally bc i changed the names but "id" = "code" doesn't?
     
     #getting the correct column dynamically 
     color_col <- color_column()
@@ -217,26 +217,26 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   })
   
   
-  output$map2 <- renderLeaflet({                                                       # Renders an initial Leaflet map.
-    leaflet() %>%                                                                      # Initializes a new Leaflet map object.
-      addTiles() %>%                                                                   # Adds a base tile layer to the map.
-      setView(lng = 0, lat = 20, zoom = 2)                                             # Sets the initial view (center and zoom level).
+  output$map2 <- renderLeaflet({                                                      
+    leaflet() %>%                                                                      
+      addTiles() %>%                                                                   
+      setView(lng = 0, lat = 20, zoom = 2)                                             
   })
   
-  observe({                                                                            # Watches for changes to reactive inputs and updates the map.
-    data <- filtered_coordinates()                                                     # Gets the currently selected dataset.
+  observe({                                                                            
+    data <- filtered_coordinates()                                                     
     data <- data %>%
-      filter(!is.na(longitude) & !is.na(latitude) &                                   #Ensures data set contains valid longitude and latitude
+      filter(!is.na(longitude) & !is.na(latitude) &                                   
                longitude != 0 & latitude != 0) 
       
-    leafletProxy("map2") %>%                                                           # Updates the existing Leaflet map without re-rendering it.
-      clearMarkers() %>%                                                               # Removes existing markers from the map.
+    leafletProxy("map2") %>%                                                           
+      clearMarkers() %>%                                                               
       clearMarkerClusters() %>%  
-      addMarkers(data = data,                                                          # Adds new markers to the map based on the selected dataset.
-                 lng = ~longitude,                                                     # Specifies the longitude for marker placement.
-                 lat = ~latitude,                                                      # Specifies the latitude for marker placement.
-                 label = ~address,                                                     # Sets a label (popup) for each marker with the full address.
-                 clusterOptions = markerClusterOptions())                            # Enables clustering for markers to manage overlapping.
+      addMarkers(data = data,                                                         
+                 lng = ~longitude,                                                     
+                 lat = ~latitude,                                                     
+                 label = ~address,                                                   
+                 clusterOptions = markerClusterOptions())                           
     
     })
   
