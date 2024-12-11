@@ -1,19 +1,31 @@
 
 library(dplyr)
 library(rvest)
+library(RCurl)
 
 # Subway website
 subway <- "https://restaurants.subway.com"
 
 # Web Parser Function
 addressParser <- function(url) {   
+  
+  if (!url.exists(url)) { return(NA) }
+  
   hrefs <- read_html(url) %>%                                                   
     html_elements(".Directory-listLink") %>%     
-    html_attr("href") 
+    html_attr("href")
+  
   # Absolute URLs
   formattedHrefs <- gsub("../", "", hrefs, fixed = TRUE) 
   link <- paste(subway, formattedHrefs, sep = "/")
+  
+  print(length(link))
   print(link)
+  
+  if (length(link) == 1 && link == "https://restaurants.subway.com/index.html" || link == "https://restaurants.subway.com/") {
+    return(NA)
+  }
+  
   # Needed to check if url is the address page
   addressLink <- read_html(url) %>%
     html_elements(".c-address") %>%
@@ -40,14 +52,11 @@ addressParser <- function(url) {
       teaserAddressLink <- paste(subway, formattedTeaserHrefs, sep = "/")
       # Extract address 
       
-      c(lapply(teaserAddresslink, addressParser), recursive = TRUE)
-      
-      # teaserAddressLink %>%
-      #    read_html %>% 
-      #    html_element("#address") %>% 
-      #    html_text2() 
-      
-      
+      if (length(teaserLink) == 1) {
+        addressParser(teaserAddressLink)
+      } else {
+        c(lapply(teaserAddressLink, addressParser), recursive = TRUE)  
+      }
       
       # FALSE: Check if url == faulty url
     } else {
@@ -82,8 +91,8 @@ addressParser <- function(url) {
       # FALSE: Call function again (recursion)
     } else {
       c(lapply(link, addressParser), recursive = TRUE)
-        }
-      }
+    }
+  }
 }
 
 
