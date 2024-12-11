@@ -248,7 +248,7 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   
   # Create a reactive expression to select the appropriate data based on the input
   selected_data <- reactive({
-    switch(input$GlobalFactor,
+    switch(input$GlobalFactor2,
            "obese_overweight_adults" = obese_overweight_adults,
            "GDP_tidy" = GDP_tidy,
            "Gini_Inequality_Index_tidy" = Gini_Inequality_Index_tidy,

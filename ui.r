@@ -142,10 +142,9 @@ shinyUI(
                  column(12,
                         tags$h3(strong("Raw Data Tables")),
                         verbatimTextOutput("rawdescText"))
-                 #Note: what if we added a dropdown to select by column?
                ),
                
-               selectInput("GlobalFactor",
+               selectInput("GlobalFactor2",
                            label = "Choose a Global Factor",
                            choices = list(
                              "Adult Obesity" = "obese_overweight_adults",
