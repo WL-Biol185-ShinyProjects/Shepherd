@@ -289,5 +289,12 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
       return(NULL)
     }
   })
-}
+
+  #PROBABLY NEED TO INSERT PEARSON THINGS HERE FOR SERVER SIDE
+  # output$ggPlot <- renderPlot
+  
+  
+  
+  
+  }
 )
