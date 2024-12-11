@@ -24,6 +24,12 @@ You can embed Shiny inputs and outputs in your document. Outputs are automatical
 library(shiny)
 library(bslib)
 
+#Loading all datasets
+obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
+GDP_tidy <- read.csv("GDP_tidy.csv")
+Gini_Inequality_Index_tidy <- read.csv("Gini_Inequality_Index_tidy.csv")
+happiness_index_tidy <- read.csv("happiness_index_tidy.csv")
+
 # Define UI ----
 ui <- fluidPage(
   navbarPage("Happy Meals: Global Factors Related to Obesity",
@@ -39,19 +45,19 @@ ui <- fluidPage(
          ),
        
        selectInput("GlobalFactor",
-                               label = "Choose a Global Factor",
-                               choices = list(
-                                              "Adult Obesity" = "obese_overweight_adults",
-                                              
-                                              "Gross GDP" = "GDP_tidy",
-                                              
-                                              "Gini Inequality Index" = "Gini_Inequality_Index_tidy",
-                                              
-                                              "Happiness Index" = "happiness_index_tidy"
-                              
-                                              ),
-                    ),
-                  tableOutput("data_table")  #outputs data table
+                   label = "Choose a Global Factor",
+                   choices = list(
+                                  "Adult Obesity" = "obese_overweight_adults",
+                                  
+                                  "Gross GDP" = "GDP_tidy",
+                                  
+                                  "Gini Inequality Index" = "Gini_Inequality_Index_tidy",
+                                  
+                                  "Happiness Index" = "happiness_index_tidy"
+                  
+                                  ),
+        ),
+      tableOutput("data_table")  #outputs data table
          )
   )
 )
@@ -79,6 +85,7 @@ server <- function(input, output) {
   
   # spits out table
   output$data_table <- renderTable({
+    selected_data()
   })
 }
 
