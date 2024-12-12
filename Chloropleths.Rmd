@@ -22,16 +22,20 @@ geo <- geojson_read("countries.geo.json", what = "sp")
 ```{r}
 obesity <- read.csv("obese_overweight_adults.csv")
 
-geo@data <- left_join(geo@data, obesity, by = c("name" = "Entity"))
+geo@data <- left_join(geo@data, obesity, by = c("name" = "country"))
 
 bins <- c(0, 2, 5, 10, 15, 20, 25, 30, Inf)
-pal <- colorBin("YlOrRd", domain = geo@data$percentBMI30.y, bins = bins)
+pal <- colorBin("YlOrRd", domain = geo@data$percentBMI30, bins = bins)
 
 leaflet(geo) %>%
   setView(lng = 0, lat = 20, zoom = 2) %>%
-  addPolygons(fillColor = ~pal(percentBMI30.y),
+  addPolygons(fillColor = ~pal(percentBMI30),
               weight    = 2,
               opacity   = 1,
               dashArray = "3",)
+```
+
+```{r}
+v
 ```
 
