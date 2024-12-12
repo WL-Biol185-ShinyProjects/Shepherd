@@ -7,6 +7,9 @@ library(leaflet)
 library(geojsonio)
 library(tidyverse)
 library(dplyr)
+library(sf)
+library(ggrepel)
+library(plotly)
 
 #Loading all datasets
 obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
@@ -157,8 +160,7 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   })
   
   # Observe changes and update map
-  #hard-coded lines: "country" is obesity and happiness, "country name" is GDP and Gini Inequality
-  #lines: 94, 98, 104
+
   
   observe({
     # Get filtered data
@@ -168,7 +170,7 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
     geo@data <- left_join(
       geo@data, 
       data, 
-      by = c("name" = "country"))
+      by = c("name" = "country")) #c("name" = "country")) returns functionally bc i changed the names but "id" = "code" doesn't?
     
     #getting the correct column dynamically 
     color_col <- color_column()
@@ -203,6 +205,157 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   })
   
   
+  #CORRELATIONAL STUFF
+  output$pearsoncorrelationText <- renderText({
+    "In this box, we're going to talk about what Pearson correlations are and what this data shows us"
+    
+  })
+  
+  #prepare the data sets!
+  #obesity
+  unfiltered_obesity_df <- read.csv("obese_overweight_adults.csv")
+  filtered_obesity_df <- unfiltered_obesity_df %>%
+    select(1, 2, 3, 4) %>%
+    filter(unfiltered_obesity_df$year == 2016)
+  
+  
+  #happiness
+  unfiltered_happy_df <- read.csv("happiness_index_tidy.csv") 
+  filtered_happy_df <- unfiltered_happy_df %>%
+    select(2, 3, 4, 12) %>%
+    filter(unfiltered_happy_df$year == 2016)
+  
+  #gdp
+  unfiltered_gdp_df <- read.csv("GDP_tidy.csv")
+  filtered_gdp_df <- unfiltered_gdp_df %>%
+    select(2, 3, 5, 6) %>%
+    filter(unfiltered_gdp_df$year == 2016)
+  
+  country_pop <- read.csv("country_pop.csv") 
+  country_pop <- country_pop %>%
+    select(2, "X2016")
+  
+  colnames(country_pop)[colnames(country_pop) == "Country.Code"] <- "Code"
+  colnames(country_pop)[colnames(country_pop) == "X2016"] <- "Population"
+  
+  #table joins
+  
+  result <-  filtered_obesity_df %>%
+    left_join(filtered_happy_df, by = "country")
+  
+  variables_df <- result %>%
+    left_join(filtered_gdp_df, by = "country")
+  
+  variables_df <- variables_df %>%
+    left_join(country_pop, by = c("code.x" = "Code"))
+  
+  print(colnames(variables_df))
+  
+  variables_df <- variables_df %>%
+    select(1, 4, 7, 8, 9, 10, 11) 
+  
+  print(colnames(variables_df))
+  
+  
+  #Get rid of NA gdp rows, then create a column with calculated gdp_per_capita
+  clean_variables_df <- variables_df %>%
+    filter(!is.na(gdp) & !is.na(Population)) %>%  # Use 'variables_df' instead of 'filtered_variables_df'
+    mutate(gdp_per_capita = (gdp / Population))
+  
+  print(colnames(variables_df))  #okay did it give me the columns i wanted or not
+  
+  
+  #Correlation time
+  print(head(clean_variables_df))
+  
+  
+  
+  #CORRELATION BETWEEN OBESITY AND GDP PER CAPITA
+  correlation <- cor(clean_variables_df$gdp_per_capita, clean_variables_df$percentBMI30, method = "pearson", use = "complete.obs")
+  
+  #Render plot (obesity, gdp per capita)
+  output$Obesity_GDPpercapita_plot <- renderPlot({
+    ggplot(clean_variables_df, aes(x = gdp_per_capita, y = percentBMI30)) +
+      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
+      labs(
+        title = "GDP per Capita vs Obesity Rate",
+        subtitle = paste("Pearson Correlation: ", round(correlation, 2)),
+        x = "GDP per Capita",
+        y = "Obesity Rate"
+      ) +
+      theme_minimal()
+    
+  })
+  
+  #CORRELATION BETWEEN OBESITY AND GROSS GDP
+  correlation_2 <- cor(clean_variables_df$gdp, clean_variables_df$percentBMI30, method = "pearson", use = "complete.obs")
+  output$Obesity_GDPgross_plot <- renderPlot({
+    ggplot(clean_variables_df, aes(x = gdp, y = percentBMI30)) +
+      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
+      labs(
+        title = "Gross GDP vs Obesity Rate",
+        subtitle = paste("Pearson Correlation: ", round(correlation_2, 2)),
+        x = "Gross GDP",
+        y = "Obesity Rate"
+      ) +
+      theme_minimal()
+  })
+  
+  #CORRELATION BETWEEN HAPPINESS AND GDP PER CAPITA
+  correlation_3 <- cor(clean_variables_df$gdp_per_capita, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
+  output$Happiness_GDPpercapita_plot <- renderPlot({
+    ggplot(clean_variables_df, aes(x = gdp_per_capita, y = positive_affect)) +
+      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
+      labs(
+        title = "GDP per Capita vs Happiness Level",
+        subtitle = paste("Pearson Correlation: ", round(correlation_3, 2)),
+        x = "GDP per Capita",
+        y = "Happiness Level"
+      ) +
+      theme_minimal()
+  })
+  
+  #CORRELATION BETWEEN HAPPINESS AND GROSS GDP
+  correlation_4 <- cor(clean_variables_df$gdp, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
+  output$Happiness_GDPgross_plot <- renderPlot({
+    ggplot(clean_variables_df, aes(x = gdp_per_capita, y = positive_affect)) +
+      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
+      labs(
+        title = "Gross GDP vs Happiness Level",
+        subtitle = paste("Pearson Correlation: ", round(correlation_4, 2)),
+        x = "GDP per Capita",
+        y = "Happiness Level"
+      ) +
+      theme_minimal()
+    
+  })
+  
+  correlation_5 <- cor(clean_variables_df$percentBMI30, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
+  output$Obesity_Happiness_plot <- renderPlot({
+    ggplot(clean_variables_df, aes(x = percentBMI30, y = positive_affect)) +
+      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+      geom_text_repel(aes(label = country), 
+                      size = 3, 
+                      max.overlaps = 100) +  # Increase max.overlaps
+      labs(
+        title = "Obesity Rate vs Happiness Level",
+        subtitle = paste("Pearson Correlation: ", round(correlation_5, 2)),
+        x = "Obesity Rate",
+        y = "Happiness Level"
+      ) +
+      theme_minimal()
+    
+  })
+  
   
   #LEAFLET ON FAST FOOD MAP MANIA ("map2")
   coordinates <- read.csv("Copy of International Domino's Locations (Finalized) - Sheet1.csv")
@@ -218,26 +371,26 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   })
   
   
-  output$map2 <- renderLeaflet({                                                       # Renders an initial Leaflet map.
-    leaflet() %>%                                                                      # Initializes a new Leaflet map object.
-      addTiles() %>%                                                                   # Adds a base tile layer to the map.
-      setView(lng = 0, lat = 20, zoom = 2)                                             # Sets the initial view (center and zoom level).
+  output$map2 <- renderLeaflet({                                                      
+    leaflet() %>%                                                                      
+      addTiles() %>%                                                                   
+      setView(lng = 0, lat = 20, zoom = 2)                                             
   })
   
-  observe({                                                                            # Watches for changes to reactive inputs and updates the map.
-    data <- filtered_coordinates()                                                     # Gets the currently selected dataset.
+  observe({                                                                            
+    data <- filtered_coordinates()                                                     
     data <- data %>%
-      filter(!is.na(longitude) & !is.na(latitude) &                                   #Ensures data set contains valid longitude and latitude
+      filter(!is.na(longitude) & !is.na(latitude) &                                   
                longitude != 0 & latitude != 0) 
       
-    leafletProxy("map2") %>%                                                           # Updates the existing Leaflet map without re-rendering it.
-      clearMarkers() %>%                                                               # Removes existing markers from the map.
+    leafletProxy("map2") %>%                                                           
+      clearMarkers() %>%                                                               
       clearMarkerClusters() %>%  
-      addMarkers(data = data,                                                          # Adds new markers to the map based on the selected dataset.
-                 lng = ~longitude,                                                     # Specifies the longitude for marker placement.
-                 lat = ~latitude,                                                      # Specifies the latitude for marker placement.
-                 label = ~address,                                                     # Sets a label (popup) for each marker with the full address.
-                 clusterOptions = markerClusterOptions())                            # Enables clustering for markers to manage overlapping.
+      addMarkers(data = data,                                                         
+                 lng = ~longitude,                                                     
+                 lat = ~latitude,                                                     
+                 label = ~address,                                                   
+                 clusterOptions = markerClusterOptions())                           
     
     })
   
@@ -248,7 +401,7 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   
   # Create a reactive expression to select the appropriate data based on the input
   selected_data <- reactive({
-    switch(input$GlobalFactor,
+    switch(input$GlobalFactor2,
            "obese_overweight_adults" = obese_overweight_adults,
            "GDP_tidy" = GDP_tidy,
            "Gini_Inequality_Index_tidy" = Gini_Inequality_Index_tidy,
@@ -290,5 +443,12 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
       return(NULL)
     }
   })
-}
+
+  #PROBABLY NEED TO INSERT PEARSON THINGS HERE FOR SERVER SIDE
+  # output$ggPlot <- renderPlot
+  
+  
+  
+  
+  }
 )
