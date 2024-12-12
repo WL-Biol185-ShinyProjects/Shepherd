@@ -27,33 +27,29 @@ library(ggrepel)
 library(plotly)
 
 #prepare the data sets?
+#I NEED TO FIX THESE MANUALLY TO PICK OUT THE RIGHT COLUMNS
 
 #obesity??
 unfiltered_obesity_df <- read_csv("obese_overweight_adults.csv")
 filtered_obesity_df <- unfiltered_obesity_df %>%
   select(1, 2, 3, 4) %>%
   filter(unfiltered_obesity_df$year == 2016)
-colnames(filtered_obesity_df)[colnames(filtered_obesity_df) == "Entity"] <- "country"
-filtered_obesity_df
+
 
 #happiness??
 unfiltered_happy_df <- read_csv("happiness_index_tidy.csv") 
 filtered_happy_df <- unfiltered_happy_df %>%
   select(2, 3, 11) %>%
   filter(unfiltered_happy_df$year == 2016)
-filtered_happy_df
 
 #gdp??
 unfiltered_gdp_df <- read_csv("GDP_tidy.csv")
 filtered_gdp_df <- unfiltered_gdp_df %>%
-  select(2, 4, 5) %>%
+  select(2, 4, 5, 6) %>%
   filter(unfiltered_gdp_df$year == 2016)
 
-colnames(filtered_gdp_df)[colnames(filtered_gdp_df) == "country name"] <- "country"
-filtered_gdp_df
-
 #table joins
-country_pop <- read_csv("country_pop.csv") #I DON'T HAVE COUNTRY_POP YET
+country_pop <- read_csv("country_pop.csv") 
 
 country_pop <- country_pop %>%
   select(2, "2016")
@@ -66,19 +62,72 @@ result <-  filtered_obesity_df %>%
   left_join(filtered_happy_df, by = "country")
 variables_df <- result %>%
   left_join(filtered_gdp_df, by = "country")
-variables_df <- variables_df %>%
-  left_join(country_pop, by = "Code")
-  
+
 variables_df <- variables_df %>%
   select(1, 2, 3, 4, 6, 8, 9) 
-
-colnames(variables_df)[colnames(variables_df) == "positive affect"] <- "positive_affect" 
-
-variables_df
 
 write.csv(variables_df, "~/Shepherd/variables_df.csv", row.names = FALSE)
 
 
+
+#ordering eggs server side up
+  
+server <- function(input, output) {
+  
+  print(colnames(variables_df))  #okay did it give me the columns i wanted or not
+
+    # Join with population data (assuming 'country_pop' has 'Code' and 'Population')
+  variables_df <- variables_df %>%
+    left_join(country_pop, by = c("code.x" = "Code"))
+
+  # Check if Population column is added
+  print(colnames(variables_df))
+  
+  
+  #Get rid of NA gdp rows, then create a column with calculated gdp_per_capita
+  clean_variables_df <- variables_df %>%
+    filter(!is.na(gdp) & !is.na(Population)) %>%  # Use 'variables_df' instead of 'filtered_variables_df'
+    mutate(gdp_per_capita = (gdp / Population))
+  
+  #Correlation time
+  
+  #CORRELATION BETWEEN OBESITY AND GDP PER CAPITA
+  correlation_1 <- cor(clean_variables_df$gdp_per_capita, clean_variables_df$percentBMI30, method = "pearson", use = "complete.obs")
+  
+  #Render plot (obesity, gdp per capita)
+  output$Obesity_GDPpercapita_plot <- renderPlot({
+    ggplot(clean_variables_df, aes(x = gdp_per_capita, y = percentBMI30)) +
+     geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
+      labs(
+        title = "GDP per Capita vs Obesity Rate",
+        subtitle = paste("Pearson Correlation: ", round(correlation_1, 2)),
+        x = "GDP per Capita",
+        y = "Obesity Rate"
+      ) +
+      theme_minimal()
+    
+  })
+  
+  #CORRELATION BETWEEN OBESITY AND GROSS GDP
+  correlation_2 <- cor(clean_variables_df$gdp, clean_variables_df$percentBMI30, method = "pearson", use = "complete.obs")
+  output$Obesity_GDPgross_plot <- renderPlot({
+    ggplot(clean_variables_df, aes(x = gdp, y = percentBMI30)) +
+  geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+  geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+  geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
+  labs(
+    title = "GDP vs Obesity Rate",
+    subtitle = paste("Pearson Correlation: ", round(correlation_2, 2)),
+    x = "GDP",
+    y = "Obesity Rate"
+  ) +
+  theme_minimal()
+  })
+  
+  
+}
 
 #UI TIME BABYYYY
 #SWAP OUT CODE TO DO HAPPINESS_GDP GROSS IF YOU WANT
@@ -95,35 +144,6 @@ ui <- fluidPage(
   plotOutput("Obesity_Happiness_plot")
 )
 
-
-#ordering eggs server side up
-  
-server <- function(input, output) {
-  #Get rid of NA gdp rows, then create a column with calculated gdp_per_capita
-  filtered_variables_df <- filtered_variables_df %>% 
-  filter(!is.na(gdp))
-  clean_variables_df <- filtered_variables_df %>%
-  mutate(gdp_per_capita = (gdp / Population))
-  
-  #Correlation time
-  
-  output$Obesity_GDPpercapita_plot <- renderPlot({
-    ggplot(clean_variables_df, aes(x = gdp_per_capita, y = percentBMI30)) +
-     geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
-      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
-      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
-      labs(
-        title = "GDP per Capita vs Obesity Rate",
-        subtitle = paste("Pearson Correlation: ", round(correlation, 2)),
-        x = "GDP per Capita",
-        y = "Obesity Rate"
-      ) +
-      theme_minimal()
-    
-  })
-  
-
-}
   
 shinyApp(ui = ui, server = server)
 ```
