@@ -10,7 +10,7 @@ library(leaflet)
 library(geojsonio)
 library(tidyverse)
 remotes::install_github("chris31415926535/bivariatechoropleths")
-library(bivariatechoropleths)
+#library(bivariatechoropleths)
 library(sf)
 ```
 
