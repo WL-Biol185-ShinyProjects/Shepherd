@@ -395,8 +395,8 @@ relationship between the two variables are, along with the direction in which th
                  lng = ~longitude,                                                     
                  lat = ~latitude,                                                     
                  label = ~address,                                                   
-                 clusterOptions = markerClusterOptions())                           
-    
+                 clusterOptions = markerClusterOptions())
+      
     })
   
   #Define raw description header text
