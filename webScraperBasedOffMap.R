@@ -1,13 +1,13 @@
-
-library(dplyr)
+install.packages("rvest")
 library(rvest)
+library(dplyr)
 library(RCurl)
 
 # Subway website
 subway <- "https://restaurants.subway.com"
 
 # Web Parser Function
-addressParser <- function(url) {   
+addressParser <- function(url, results = list()) {   
   
   if (!url.exists(url)) { return(NA) }
   
@@ -67,10 +67,11 @@ addressParser <- function(url) {
         
         # FALSE: Extract address
       } else { 
-        url %>%
+        address <- url %>%
           read_html %>% 
           html_element("#address") %>% 
-          html_text2() 
+          html_text2()
+          return(address)
       }
     }
   # If length(class dir-list) == 0 is FALSE: Check if it is an address page
@@ -83,11 +84,13 @@ addressParser <- function(url) {
     } else if (url == addressLink) {
       
       # TRUE: Extract address
-      url %>%
+      address <- url %>%
         read_html %>% 
         html_element("#address") %>% 
-        html_text2() 
+        html_text2()
+        return(address)
       
+      results <- address
       # FALSE: Call function again (recursion)
     } else {
       c(lapply(link, addressParser), recursive = TRUE)
@@ -98,11 +101,13 @@ addressParser <- function(url) {
 
 
 # Calling function on Subway website
-addressParser(subway)
+addresses <- addressParser(subway)
+
 
 
 #  if (grepl("additional-locations", link)) {
 #   invalid <- link
 #   NA }
-  
+
+
   

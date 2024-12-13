@@ -109,14 +109,32 @@ shinyUI(
                "Correlation Analysis",
                fluidRow(
                  column(12,
-                        tags$h3(strong("Pearson Correlations")),
-                        verbatimTextOutput("pearsoncorrelationText")),
-
-                 plotOutput("Obesity_GDPpercapita_plot"),
-                 plotOutput("Obesity_GDPgross_plot"),
-                 plotOutput("Happiness_GDPpercapita_plot"),
-                 plotOutput("Happiness_GDPgross_plot"),
-                 plotOutput("Obesity_Happiness_plot"),
+                        tags$h2(strong("Pearson Correlations")),
+                        verbatimTextOutput("pearsoncorrelationText"))
+               ),
+               fluidRow(
+                 column(12,
+                        tags$h3(strong("What are Pearson Correlations?")),
+                        verbatimTextOutput("correlationdefinitionText")),
+                sidebarLayout(
+                   sidebarPanel(
+                     tags$h4(strong("Select Correlation to Display:")),             #Heading for context 
+                      selectInput("correlation_type",
+                         label = "",
+                         choices = c(
+                           "GDP per Capita vs Obesity" = "Obesity_GDPpercapita_plot",
+                           "Gross GDP vs Obesity" = "Obesity_GDP_plot",
+                           "GDP per Capita vs Happiness Level" = "Happiness_GDPpercapita_plot",
+                           "Gross GDP vs Happiness Level"= "Happiness_GDP_plot",
+                           "Obesity Rate vs Happiness Level" = "Obesity_Happiness_plot"
+                         ),
+                         selected = "obesity_gdp_per_capita"
+                      )
+                    ),
+                    mainPanel(
+                       plotOutput("dynamic_correlation_plot")
+                   )
+                )
                )
                
              ), 
@@ -157,6 +175,7 @@ shinyUI(
                         verbatimTextOutput("rawdescText"))
                ),
                
+               # USE this for dynamic plots
                selectInput("GlobalFactor2",
                            label = "Choose a Global Factor",
                            choices = list(

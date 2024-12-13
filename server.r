@@ -207,8 +207,16 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   
   #CORRELATIONAL STUFF
   output$pearsoncorrelationText <- renderText({
-    "In this box, we're going to talk about what Pearson correlations are and what this data shows us"
+    "In this box, we're going to talk about what Pearson correlations are, and the Pearson correlations between our variables."
     
+  })
+  
+  # Define Pearson Correlation
+  output$correlationdefinitionText <- renderText({
+    "Pearson correlations are a way to measure the linear correlation between two different variables.
+The pearson correlation coefficient is a number between -1 and 1 that can measure how strong the 
+relationship between the two variables are, along with the direction in which the correlation goes 
+(positive or negative)."
   })
   
   #prepare the data sets!
@@ -268,94 +276,91 @@ In our app, you’ll find a country’s gross GDP in a given year as well as a c
   #Correlation time
   print(head(clean_variables_df))
   
+  correlation_plot <- reactive({
+    # Switch logic to determine variables for the selected correlation
+    switch(input$correlation_type,
+           "Obesity_GDPpercapita_plot" = {
+             correlation <- cor(clean_variables_df$gdp_per_capita, clean_variables_df$percentBMI30, method = "pearson", use = "complete.obs")
+             ggplot(clean_variables_df, aes(x = gdp_per_capita, y = percentBMI30)) +
+               geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+               geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+               geom_text_repel(aes(label = country), size = 3) +  # Add country labels
+               labs(
+                 title = "GDP per Capita vs Obesity Rate",
+                 subtitle = paste("Pearson Correlation: ", round(correlation, 2)),
+                 x = "GDP per Capita",
+                 y = "Obesity Rate"
+               ) +
+               theme_minimal()
+           },
+           "Obesity_GDP_plot" = {
+           correlation <- cor(clean_variables_df$gdp, clean_variables_df$percentBMI30, method = "pearson", use = "complete.obs")
+             ggplot(clean_variables_df, aes(x = gdp, y = percentBMI30)) +
+               geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+               geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+               geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
+               labs(
+                 title = "Gross GDP vs Obesity Rate",
+                 subtitle = paste("Pearson Correlation: ", round(correlation, 2)),
+                 x = "Gross GDP",
+                 y = "Obesity Rate"
+               ) +
+               theme_minimal()
+            },
   
-  
-  #CORRELATION BETWEEN OBESITY AND GDP PER CAPITA
-  correlation <- cor(clean_variables_df$gdp_per_capita, clean_variables_df$percentBMI30, method = "pearson", use = "complete.obs")
-  
-  #Render plot (obesity, gdp per capita)
-  output$Obesity_GDPpercapita_plot <- renderPlot({
-    ggplot(clean_variables_df, aes(x = gdp_per_capita, y = percentBMI30)) +
-      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
-      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
-      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
-      labs(
-        title = "GDP per Capita vs Obesity Rate",
-        subtitle = paste("Pearson Correlation: ", round(correlation, 2)),
-        x = "GDP per Capita",
-        y = "Obesity Rate"
-      ) +
-      theme_minimal()
-    
+           "Happiness_GDPpercapita_plot" = {
+             correlation <- cor(clean_variables_df$gdp_per_capita, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
+             ggplot(clean_variables_df, aes(x = gdp_per_capita, y = positive_affect)) +
+               geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+               geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+               geom_text_repel(aes(label = country), size = 3) +  # Add country labels
+               labs(
+                 title = "GDP per Capita vs Happiness",
+                 subtitle = paste("Pearson Correlation: ", round(correlation, 2)),
+                 x = "GDP per Capita",
+                 y = "Happiness (Positive Affect)"
+               ) +
+               theme_minimal()
+           },
+           
+           "Happiness_GDP_plot" = {
+           correlation <- cor(clean_variables_df$gdp, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
+             ggplot(clean_variables_df, aes(x = gdp_per_capita, y = positive_affect)) +
+               geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+               geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+               geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
+               labs(
+                 title = "Gross GDP vs Happiness Level",
+                 subtitle = paste("Pearson Correlation: ", round(correlation, 2)),
+                 x = "GDP per Capita",
+                 y = "Happiness Level"
+               ) +
+               theme_minimal()
+           },
+           
+           "Obesity_Happiness_plot" = {
+           correlation <- cor(clean_variables_df$percentBMI30, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
+             ggplot(clean_variables_df, aes(x = percentBMI30, y = positive_affect)) +
+               geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
+               geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
+               geom_text_repel(aes(label = country), 
+                               size = 3, 
+                               max.overlaps = 100) +  # Increase max.overlaps
+               labs(
+                 title = "Obesity Rate vs Happiness Level",
+                 subtitle = paste("Pearson Correlation: ", round(correlation, 2)),
+                 x = "Obesity Rate",
+                 y = "Happiness Level"
+               ) +
+               theme_minimal()
+           }
+    )
   })
   
-  #CORRELATION BETWEEN OBESITY AND GROSS GDP
-  correlation_2 <- cor(clean_variables_df$gdp, clean_variables_df$percentBMI30, method = "pearson", use = "complete.obs")
-  output$Obesity_GDPgross_plot <- renderPlot({
-    ggplot(clean_variables_df, aes(x = gdp, y = percentBMI30)) +
-      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
-      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
-      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
-      labs(
-        title = "Gross GDP vs Obesity Rate",
-        subtitle = paste("Pearson Correlation: ", round(correlation_2, 2)),
-        x = "Gross GDP",
-        y = "Obesity Rate"
-      ) +
-      theme_minimal()
+  # Render the selected correlation plot
+  output$dynamic_correlation_plot <- renderPlot({
+    correlation_plot()
   })
-  
-  #CORRELATION BETWEEN HAPPINESS AND GDP PER CAPITA
-  correlation_3 <- cor(clean_variables_df$gdp_per_capita, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
-  output$Happiness_GDPpercapita_plot <- renderPlot({
-    ggplot(clean_variables_df, aes(x = gdp_per_capita, y = positive_affect)) +
-      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
-      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
-      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
-      labs(
-        title = "GDP per Capita vs Happiness Level",
-        subtitle = paste("Pearson Correlation: ", round(correlation_3, 2)),
-        x = "GDP per Capita",
-        y = "Happiness Level"
-      ) +
-      theme_minimal()
-  })
-  
-  #CORRELATION BETWEEN HAPPINESS AND GROSS GDP
-  correlation_4 <- cor(clean_variables_df$gdp, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
-  output$Happiness_GDPgross_plot <- renderPlot({
-    ggplot(clean_variables_df, aes(x = gdp_per_capita, y = positive_affect)) +
-      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
-      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
-      geom_text_repel(aes(label = country), size = 3) +  # Add non-overlapping country labels
-      labs(
-        title = "Gross GDP vs Happiness Level",
-        subtitle = paste("Pearson Correlation: ", round(correlation_4, 2)),
-        x = "GDP per Capita",
-        y = "Happiness Level"
-      ) +
-      theme_minimal()
-    
-  })
-  
-  correlation_5 <- cor(clean_variables_df$percentBMI30, clean_variables_df$positive_affect, method = "pearson", use = "complete.obs")
-  output$Obesity_Happiness_plot <- renderPlot({
-    ggplot(clean_variables_df, aes(x = percentBMI30, y = positive_affect)) +
-      geom_point(color = "blue", alpha = 0.7) +  # Scatter plot
-      geom_smooth(method = "lm", color = "red", se = TRUE) +  # Line of best fit
-      geom_text_repel(aes(label = country), 
-                      size = 3, 
-                      max.overlaps = 100) +  # Increase max.overlaps
-      labs(
-        title = "Obesity Rate vs Happiness Level",
-        subtitle = paste("Pearson Correlation: ", round(correlation_5, 2)),
-        x = "Obesity Rate",
-        y = "Happiness Level"
-      ) +
-      theme_minimal()
-    
-  })
-  
   
   #LEAFLET ON FAST FOOD MAP MANIA ("map2")
   coordinates <- read.csv("Copy of International Domino's Locations (Finalized) - Sheet1.csv")
