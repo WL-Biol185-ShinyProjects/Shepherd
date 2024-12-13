@@ -5,6 +5,9 @@ library(tidyverse)
 library(dplyr)
 library(leaflet)
 library(geojsonio)
+library(sf)
+library(ggrepel)
+library(plotly)
 
 #Loading all datasets
 obese_overweight_adults <- read.csv("obese_overweight_adults.csv")
@@ -103,8 +106,18 @@ shinyUI(
              
              #CORRELATION ANALYSIS
              tabPanel(
-               "Correlation Analysis"
-               #NOTE TO SELF THIS IS A GEOMPOINT WITH A REGRESSIONA AND TWO DROP-DOWNS
+               "Correlation Analysis",
+               fluidRow(
+                 column(12,
+                        tags$h3(strong("Pearson Correlations")),
+                        verbatimTextOutput("pearsoncorrelationText")),
+
+                 plotOutput("Obesity_GDPpercapita_plot"),
+                 plotOutput("Obesity_GDPgross_plot"),
+                 plotOutput("Happiness_GDPpercapita_plot"),
+                 plotOutput("Happiness_GDPgross_plot"),
+                 plotOutput("Obesity_Happiness_plot"),
+               )
                
              ), 
              
